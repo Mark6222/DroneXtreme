@@ -47,8 +47,8 @@ public class PlayerMovement : NetworkBehaviour
     {
         if(!IsOwner && !Test) return;
         float speed = leftVertical;
-        Vector3 rotationVelocity = new Vector3(-rightHorizontal * rotationSpeed * rightMagnitude,
-        leftHorizontal * rotationSpeed * leftMagnitude, -rightVertical * rotationSpeed * rightMagnitude);
+        Vector3 rotationVelocity = new Vector3(rightHorizontal * rotationSpeed * rightMagnitude,
+        leftHorizontal * rotationSpeed * leftMagnitude, rightVertical * rotationSpeed * rightMagnitude);
         rig.angularVelocity = transform.TransformDirection(rotationVelocity);
 
         movementSpeed = leftMagnitude * maxMovementSpeed * Speed;

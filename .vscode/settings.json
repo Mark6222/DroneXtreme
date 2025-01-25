@@ -51,5 +51,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "DroneGamePrototype.sln"
+    "dotnet.defaultSolution": "DroneXtreme.sln"
 }
