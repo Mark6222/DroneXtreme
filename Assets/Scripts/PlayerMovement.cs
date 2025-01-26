@@ -25,6 +25,17 @@ public class PlayerMovement : NetworkBehaviour
         rig = GetComponent<Rigidbody>();
         Physics.gravity = new Vector3(0, -100f, 0);
         audioSource = GetComponent<AudioSource>();
+        if (!IsOwner)
+        {
+            enabled = false;
+        }
+    }
+    public override void OnNetworkSpawn()
+    {
+        if (IsOwner)
+        {
+            Debug.Log("Player spawned: " + gameObject.name);
+        }
     }
     public void OnLeftStick(InputValue inputValue)
     {
@@ -32,7 +43,7 @@ public class PlayerMovement : NetworkBehaviour
         leftHorizontal = leftStickInput.x;
         leftVertical = leftStickInput.y;
         leftMagnitude = leftStickInput.magnitude;
-        audioSource.volume = leftVertical  + 0.1f;
+        audioSource.volume = leftVertical + 0.1f;
 
     }
     public void OnRightStick(InputValue inputValue)
@@ -45,7 +56,7 @@ public class PlayerMovement : NetworkBehaviour
     }
     void Update()
     {
-        if(!IsOwner && !Test) return;
+        if (!IsOwner && !Test) return;
         float speed = leftVertical;
         Vector3 rotationVelocity = new Vector3(rightHorizontal * rotationSpeed * rightMagnitude,
         leftHorizontal * rotationSpeed * leftMagnitude, rightVertical * rotationSpeed * rightMagnitude);
