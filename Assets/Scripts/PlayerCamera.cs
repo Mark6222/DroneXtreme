@@ -1,5 +1,6 @@
 using UnityEngine;
 using Unity.Netcode;
+using UnityEngine.SceneManagement;
 
 public class PlayerCamera : NetworkBehaviour
 {
@@ -7,6 +8,9 @@ public class PlayerCamera : NetworkBehaviour
     {
         if (IsOwner)
         {
+            if(SceneManager.GetActiveScene().name == "SplashScreen"){
+                gameObject.SetActive(false);
+            }
             gameObject.SetActive(true);
         }
         else
