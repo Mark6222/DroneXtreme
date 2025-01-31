@@ -48,15 +48,15 @@ public class ProcedurelGeneration : MonoBehaviour
             splineContainer.Spline.Clear();
             for (int i = 0; i < RaceSize; i++)
             {
-                float angle = (i / (float)RaceSize) * Mathf.PI * 2f; // Spread points evenly around a full circle
+                float angle = (i / (float)RaceSize) * Mathf.PI * 2f;
 
-                float radiusVariation = UnityEngine.Random.Range(-randomNum, randomNum); // Add randomness to radius
-                float finalRadius = amplitude + radiusVariation; // Base radius + random offset
+                float radiusVariation = UnityEngine.Random.Range(-randomNum, randomNum);
+                float finalRadius = amplitude + radiusVariation;
 
                 float circleX = Mathf.Cos(angle) * finalRadius;
                 float circleY = Mathf.Sin(angle) * finalRadius;
                 float randomX = UnityEngine.Random.Range(-randomNum, randomNum);
-                float randomY = +UnityEngine.Random.Range(-randomNum, randomNum);
+                float randomY = UnityEngine.Random.Range(-randomNum, randomNum);
                 float randomZ = UnityEngine.Random.Range(-randomNum, randomNum);
 
 
@@ -65,7 +65,6 @@ public class ProcedurelGeneration : MonoBehaviour
                 y = y + circleY;
             }
 
-            // Close the loop by adding the first point again at the end
             splineContainer.Spline.Closed = true;
         }
     }
@@ -80,19 +79,7 @@ public class ProcedurelGeneration : MonoBehaviour
     }
     void Update()
     {
-        int currentRotation = rotateX + rotateY + rotateZ;
-        if (rotatePrev != currentRotation)
-        {
-            rotatePrev = currentRotation;
-            Rotate(rotateX, rotateY, rotateZ);
-        }
-    }
-    void Rotate(float x, float y, float z)
-    {
-        foreach (GameObject point in points)
-        {
-            point.transform.localRotation = Quaternion.Euler(new Vector3(point.transform.localRotation.x + x, point.transform.localRotation.y + y, point.transform.localRotation.z + z));
-        }
+
     }
 }
 [CustomEditor(typeof(ProcedurelGeneration))]

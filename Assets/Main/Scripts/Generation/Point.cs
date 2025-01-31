@@ -5,7 +5,6 @@ public class Point : MonoBehaviour
     public GameObject prefab;
     void Start()
     {
-        Debug.Log("hello");
     }
 
     private float timer = 0f;
@@ -17,7 +16,7 @@ public class Point : MonoBehaviour
         {
             timer += Time.deltaTime;
 
-            if (timer >= 10f)
+            if (timer >= 1f)
             {
                 DoSomething();
                 hasTriggered = true;
@@ -27,6 +26,6 @@ public class Point : MonoBehaviour
 
     void DoSomething()
     {
-        Instantiate(prefab, gameObject.transform.position, gameObject.transform.localRotation);
+        Instantiate(prefab, gameObject.transform.position, gameObject.transform.rotation);
     }
 }
