@@ -597,6 +597,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1727771019435819130, guid: 945ff863d1f1bea469dfc2e31f6db04e, type: 3}
+      propertyPath: m_Name
+      value: Virtual Camera
+      objectReference: {fileID: 0}
     - target: {fileID: 3766573056405271569, guid: 945ff863d1f1bea469dfc2e31f6db04e, type: 3}
       propertyPath: m_LocalPosition.x
       value: 701.4
@@ -649,7 +653,11 @@ PrefabInstance:
       propertyPath: InScenePlacedSourceGlobalObjectIdHash
       value: 3626803980
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 8462047491195902363, guid: 945ff863d1f1bea469dfc2e31f6db04e, type: 3}
+    - {fileID: 1365288763272632526, guid: 945ff863d1f1bea469dfc2e31f6db04e, type: 3}
+    - {fileID: 3007576702472479352, guid: 945ff863d1f1bea469dfc2e31f6db04e, type: 3}
+    - {fileID: 6749667056879591917, guid: 945ff863d1f1bea469dfc2e31f6db04e, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

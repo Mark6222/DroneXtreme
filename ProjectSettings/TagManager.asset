@@ -8,6 +8,7 @@ TagManager:
   - Drone
   - NetworkManager
   - Point
+  - TerrainHeight
   layers:
   - Default
   - TransparentFX

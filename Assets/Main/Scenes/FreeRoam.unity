@@ -13160,6 +13160,10 @@ PrefabInstance:
       propertyPath: InScenePlacedSourceGlobalObjectIdHash
       value: 1329564966
       objectReference: {fileID: 0}
+    - target: {fileID: 8348762545565381227, guid: af062d5d6b2ade444903308c5647ab94, type: 3}
+      propertyPath: m_Name
+      value: Virtual Camera
+      objectReference: {fileID: 0}
     - target: {fileID: 8571572105811758864, guid: af062d5d6b2ade444903308c5647ab94, type: 3}
       propertyPath: m_LocalPosition.x
       value: 579.48
@@ -13208,7 +13212,11 @@ PrefabInstance:
       propertyPath: multiplyerText
       value: 
       objectReference: {fileID: 2089983642}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 1195021365533702154, guid: af062d5d6b2ade444903308c5647ab94, type: 3}
+    - {fileID: 391233849409652001, guid: af062d5d6b2ade444903308c5647ab94, type: 3}
+    - {fileID: 836247738881845924, guid: af062d5d6b2ade444903308c5647ab94, type: 3}
+    - {fileID: 1871258820713020487, guid: af062d5d6b2ade444903308c5647ab94, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
