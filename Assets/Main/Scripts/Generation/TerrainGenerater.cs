@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using Unity.Mathematics;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Splines;
 
@@ -22,10 +23,35 @@ public class TerrainGenerater : MonoBehaviour
         StartCoroutine(RunForTenSeconds());
     }
 
+    public void Generate()
+    {
+        if (terrain == null) terrain = Terrain.activeTerrain;
+        if (terrain == null)
+        {
+            Debug.LogError("No terrain found!");
+        }
+        MapDisplay display = FindAnyObjectByType<MapDisplay>();
+        // texture = new Texture2D(textureSize, textureSize, TextureFormat.RGBA32, false);
+        texture = display.texture2D;
+        GameObject[] terrainHeights = GameObject.FindGameObjectsWithTag("TerrainHeight");
+        int i = 0;
+        pointTransforms = new Transform[terrainHeights.Length];
+        foreach (GameObject point in terrainHeights)
+        {
+            pointTransforms[i] = point.transform;
+            Destroy(point);
+            i++;
+        }
+        texture.Apply();
 
+        terrain.materialTemplate.SetTexture("_MainTex", texture);
+        ApplyHeightMap();
+        SetTerrainHeights();
+        SmoothTerrain();
+    }
     IEnumerator RunForTenSeconds()
     {
-        float duration = 4;
+        float duration = 2;
         float elapsedTime = 0f;
 
         while (elapsedTime < duration)
@@ -146,7 +172,7 @@ public class TerrainGenerater : MonoBehaviour
 
         return newHeightMap;
     }
-    
+
     void ApplyHeightMap()
     {
         TerrainData terrainData = terrain.terrainData;
@@ -169,5 +195,20 @@ public class TerrainGenerater : MonoBehaviour
 
         terrainData.SetHeights(0, 0, heights);
         Debug.Log("Heightmap applied to terrain!");
+    }
+}
+[CustomEditor(typeof(TerrainGenerater))]
+public class MyScriptEditor3 : Editor
+{
+    public override void OnInspectorGUI()
+    {
+        DrawDefaultInspector();
+
+        TerrainGenerater myScript = (TerrainGenerater)target;
+
+        if (GUILayout.Button("Generate"))
+        {
+            myScript.Generate();
+        }
     }
 }
