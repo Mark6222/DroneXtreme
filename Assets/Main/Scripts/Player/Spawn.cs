@@ -1,20 +1,44 @@
+using System.Collections;
 using UnityEngine;
 
 public class Spawn : MonoBehaviour
 {
-    public Transform spawn;
-    GameObject [] Drones;
+    GameObject[] Drones;
+    GameObject[] points;
+    public GameObject Prefab;
+
     void Start()
     {
-        Drones = GameObject.FindGameObjectsWithTag("Drone");
-        foreach(GameObject drone in Drones){
-            drone.transform.position = spawn.position;
+        StartCoroutine(RunForTenSeconds());
+    }
+    IEnumerator RunForTenSeconds()
+    {
+        float duration = 5;
+        float elapsedTime = 0f;
+
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        points = GameObject.FindGameObjectsWithTag("Point");
+        if (PlayerPrefs.GetInt("IsMultiplayer") == 1)
+        {
+            Drones = GameObject.FindGameObjectsWithTag("Drone");
+            foreach (GameObject drone in Drones)
+            {
+                drone.transform.position = points[0].transform.position;
+            }
+        }
+        else
+        {
+            Instantiate(Prefab, points[0].transform.position, Quaternion.identity);
         }
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 }

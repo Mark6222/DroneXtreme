@@ -16,7 +16,6 @@ public class ProcedurelGeneration : MonoBehaviour
     SplineContainer splineContainer;
     [SerializeField] private SplineContainer splineContainerTerrain;
     public int RaceSize = 100;
-    public int length = 100;
     public int amplitude = 20;
     public int randomNum = 30;
     float prevRandomX, prevRandomY, prevRandomZ;

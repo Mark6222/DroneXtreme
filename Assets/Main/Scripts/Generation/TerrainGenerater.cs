@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
@@ -8,66 +9,39 @@ using UnityEngine.Splines;
 public class TerrainGenerater : MonoBehaviour
 {
     [SerializeField] private Terrain terrain;
-    [SerializeField] private Texture2D heightMap;
     [SerializeField] private float heightMultiplier = 10f;
-
+    [SerializeField] private int treeCount = 10000;
+    [SerializeField] private float minHeight = 0.2f;
+    [SerializeField] private float maxHeight = 0.9f;
     public Texture2D texture;
     public int textureSize = 1000;
     Transform[] pointTransforms;
     public float baseRadius = 45f;
     public float slopeRadius = 10f;
     public int smoothingIterations = 5;
+    public float removeRadius = 130f;
+
 
     void Start()
     {
         StartCoroutine(RunForTenSeconds());
     }
 
-    public void Generate()
-    {
-        if (terrain == null) terrain = Terrain.activeTerrain;
-        if (terrain == null)
-        {
-            Debug.LogError("No terrain found!");
-        }
-        MapDisplay display = FindAnyObjectByType<MapDisplay>();
-        // texture = new Texture2D(textureSize, textureSize, TextureFormat.RGBA32, false);
-        texture = display.texture2D;
-        GameObject[] terrainHeights = GameObject.FindGameObjectsWithTag("TerrainHeight");
-        int i = 0;
-        pointTransforms = new Transform[terrainHeights.Length];
-        foreach (GameObject point in terrainHeights)
-        {
-            pointTransforms[i] = point.transform;
-            Destroy(point);
-            i++;
-        }
-        texture.Apply();
-
-        terrain.materialTemplate.SetTexture("_MainTex", texture);
-        ApplyHeightMap();
-        SetTerrainHeights();
-        SmoothTerrain();
-    }
     IEnumerator RunForTenSeconds()
     {
         float duration = 2;
         float elapsedTime = 0f;
-
         while (elapsedTime < duration)
         {
-            Debug.Log($"Running... {elapsedTime:F2} seconds elapsed");
             elapsedTime += Time.deltaTime;
             yield return null;
         }
+
         if (terrain == null) terrain = Terrain.activeTerrain;
-        if (terrain == null)
-        {
-            Debug.LogError("No terrain found!");
-        }
+
         MapDisplay display = FindAnyObjectByType<MapDisplay>();
-        // texture = new Texture2D(textureSize, textureSize, TextureFormat.RGBA32, false);
         texture = display.texture2D;
+
         GameObject[] terrainHeights = GameObject.FindGameObjectsWithTag("TerrainHeight");
         int i = 0;
         pointTransforms = new Transform[terrainHeights.Length];
@@ -77,14 +51,11 @@ public class TerrainGenerater : MonoBehaviour
             Destroy(point);
             i++;
         }
-        texture.Apply();
 
-        terrain.materialTemplate.SetTexture("_MainTex", texture);
         ApplyHeightMap();
         SetTerrainHeights();
         SmoothTerrain();
-
-        Debug.Log("10 seconds finished!");
+        GenerateTrees();
     }
 
     void SetTerrainHeights()
@@ -119,13 +90,6 @@ public class TerrainGenerater : MonoBehaviour
 
                     float heightFactor = 1f;
 
-                    // if (distance <= baseRadiusPixels) heightFactor = 1f;
-                    // else if (distance <= totalRadiusPixels)
-                    // {
-                    //     float normalizedDist = (distance - baseRadiusPixels) / slopeRadiusPixels;
-                    //     heightFactor = Mathf.SmoothStep(1f, 0f, normalizedDist);
-                    // }
-
                     float newHeight = targetHeight * heightFactor;
                     heights[terrainZ, terrainX] = newHeight;
                 }
@@ -134,6 +98,52 @@ public class TerrainGenerater : MonoBehaviour
 
         terrainData.SetHeights(0, 0, heights);
     }
+    public void GenerateTrees()
+    {
+        TerrainData terrainData = terrain.terrainData;
+        List<TreeInstance> newTrees = new List<TreeInstance>();
+
+        for (int i = 0; i < treeCount; i++)
+        {
+            float randomX = UnityEngine.Random.Range(0f, 1f);
+            float randomZ = UnityEngine.Random.Range(0f, 1f);
+
+            float worldX = terrain.transform.position.x + randomX * terrainData.size.x;
+            float worldZ = terrain.transform.position.z + randomZ * terrainData.size.z;
+            float worldY = terrain.SampleHeight(new Vector3(worldX, 0, worldZ)) + terrain.transform.position.y;
+
+            if (worldY < minHeight || worldY > maxHeight)
+                continue;
+
+            TreeInstance tree = new TreeInstance
+            {
+                position = new Vector3(randomX, (worldY - terrain.transform.position.y) / terrainData.size.y, randomZ),
+                prototypeIndex = 0,
+                widthScale = 1f,
+                heightScale = 1f,
+                color = Color.white,
+                lightmapColor = Color.white
+            };
+            Vector3 worldPosition = new Vector3(
+            tree.position.x * terrain.terrainData.size.x + terrain.transform.position.x,
+            tree.position.y * terrain.terrainData.size.y + terrain.transform.position.y,
+            tree.position.z * terrain.terrainData.size.z + terrain.transform.position.z
+            );
+            bool remove = false;
+            foreach (Transform point in pointTransforms)
+            {
+                if (Vector3.Distance(worldPosition, point.position) <= removeRadius)
+                {
+                    remove = true;
+                    break;
+                }
+            }
+            if (!remove) newTrees.Add(tree); ;
+        }
+
+        terrainData.treeInstances = newTrees.ToArray();
+    }
+
     void SmoothTerrain()
     {
         TerrainData terrainData = terrain.terrainData;
@@ -187,7 +197,7 @@ public class TerrainGenerater : MonoBehaviour
             {
                 float normalizedX = (float)x / width;
                 float normalizedY = (float)y / height;
-                float pixelHeight = heightMap.GetPixelBilinear(normalizedX, normalizedY).grayscale;
+                float pixelHeight = texture.GetPixelBilinear(normalizedX, normalizedY).grayscale;
 
                 heights[y, x] = pixelHeight * heightMultiplier / terrainData.size.y;
             }
@@ -208,7 +218,7 @@ public class MyScriptEditor3 : Editor
 
         if (GUILayout.Button("Generate"))
         {
-            myScript.Generate();
+            myScript.GenerateTrees();
         }
     }
 }

@@ -16,7 +16,7 @@ public class PlayerMovement : NetworkBehaviour
     public float Speed = 10f;
     public bool Offline = true;
     private AudioSource audioSource;
-    
+
 
     [ReadOnly] public Vector2 rightStickInput;
     [ReadOnly] public Vector2 leftStickInput;
@@ -32,6 +32,7 @@ public class PlayerMovement : NetworkBehaviour
             Offline = false;
         }
         rig = GetComponent<Rigidbody>();
+        rig.useGravity = false;
         Physics.gravity = new Vector3(0, -100f, 0);
         audioSource = GetComponent<AudioSource>();
         if (!IsOwner && !Offline)
@@ -58,15 +59,17 @@ public class PlayerMovement : NetworkBehaviour
     void Update()
     {
         // if (!IsOwner || Offline) return;
-        audioSource.volume = leftStickInput.y + 0.1f;
+        // audioSource.volume = leftStickInput.y + 0.1f;
         Vector3 rotationVelocity = new Vector3(rightStickInput.x * rotationSpeed * rightStickInput.magnitude, leftStickInput.x * rotationSpeed * leftStickInput.magnitude, rightStickInput.y * rotationSpeed * rightStickInput.magnitude);
         rig.angularVelocity = transform.TransformDirection(rotationVelocity);
         if (leftStickInput.y > 0)
         {
+            rig.useGravity = true;
+
             movementSpeed = leftStickInput.magnitude * maxMovementSpeed * Speed;
             Vector3 newVelocity = new Vector3(0, leftStickInput.y * movementSpeed, leftStickInput.y * 0.1f);
             Vector3 worldVelocity = transform.TransformDirection(newVelocity);
-            
+
             worldVelocity *= speedMultiplier;
             rig.AddForce(worldVelocity, ForceMode.VelocityChange);
         }

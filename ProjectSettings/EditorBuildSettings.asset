@@ -17,5 +17,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Main/Scenes/Race.unity
     guid: 707ebb6e976a212458de876fb727b5c7
+  - enabled: 1
+    path: Assets/Main/Scenes/ProceduralGeneration.unity
+    guid: 5fa4174739e81464e9cb122a9816a6a2
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0
