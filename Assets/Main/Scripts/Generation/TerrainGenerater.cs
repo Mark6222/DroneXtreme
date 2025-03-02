@@ -63,6 +63,7 @@ public class TerrainGenerater : MonoBehaviour
         TerrainData terrainData = terrain.terrainData;
         int heightmapResolution = terrainData.heightmapResolution;
         float[,] heights = terrainData.GetHeights(0, 0, heightmapResolution, heightmapResolution);
+        float[,,] splatmap = terrainData.GetAlphamaps(0, 0, terrainData.alphamapWidth, terrainData.alphamapHeight);
 
         Vector3 terrainSize = terrainData.size;
         Vector3 terrainPosition = terrain.transform.position;
@@ -78,6 +79,8 @@ public class TerrainGenerater : MonoBehaviour
             int slopeRadiusPixels = Mathf.RoundToInt((slopeRadius / terrainSize.x) * heightmapResolution);
             int totalRadiusPixels = baseRadiusPixels + slopeRadiusPixels;
 
+            int smallRadius = totalRadiusPixels / 2;
+
             for (int x = -totalRadiusPixels; x <= totalRadiusPixels; x++)
             {
                 for (int z = -totalRadiusPixels; z <= totalRadiusPixels; z++)
@@ -92,10 +95,20 @@ public class TerrainGenerater : MonoBehaviour
 
                     float newHeight = targetHeight * heightFactor;
                     heights[terrainZ, terrainX] = newHeight;
+                    float blendFactor = 4;
+
+                    if (x * x + z * z <= smallRadius * smallRadius)
+                    {
+
+                        for (int i = 0; i < terrainData.alphamapLayers; i++)
+                        {
+                            splatmap[terrainZ, terrainX, i] = (i == 4) ? blendFactor : (1f - blendFactor);
+                        }
+                    }
                 }
             }
         }
-
+        terrainData.SetAlphamaps(0, 0, splatmap);
         terrainData.SetHeights(0, 0, heights);
     }
     public void GenerateTrees()

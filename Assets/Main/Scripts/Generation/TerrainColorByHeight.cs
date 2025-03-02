@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEditor;
+using UnityEngine.Rendering;
 public class TerrainColorByHeight : MonoBehaviour
 {
     [SerializeField] private Terrain terrain;
@@ -22,25 +23,44 @@ public class TerrainColorByHeight : MonoBehaviour
         int layers = terrainData.alphamapLayers;
 
         float[,,] alphaMaps = terrainData.GetAlphamaps(0, 0, width, height);
-
+        float[] heights = new float[width * height];
+        float max = 0;
+        float min = 0;
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
             {
-                float terrainHeight = terrainData.GetHeight(x, y) / terrainData.size.y;
-
+                float num = terrainData.GetHeight(x, y);
+                if (num > max)
+                {
+                    max = num;
+                }
+                else if (num < min)
+                {
+                    min = num;
+                }
+            }
+        }
+        // Debug.Log("Max: " + max + " Min: " + min);
+        for (int y = 0; y < width; y++)
+        {
+            for (int x = 0; x < height; x++)
+            {
+                float normalizedHeight = terrainData.GetHeight(y, x);
+                // Debug.Log("Normalized size: " + normalizedHeight);
                 for (int i = 0; i < layers; i++)
                 {
                     alphaMaps[x, y, i] = 0;
                 }
 
-                for (int h = 0; h < Heights.Length; h++)
+                for (int h = 0; h < layers; h++)
                 {
-                    if (terrainHeight > Heights[h])
+                    if (normalizedHeight > Heights[h] * max)
                     {
                         alphaMaps[x, y, h] = 1;
                         break;
                     }
+
                 }
             }
         }
