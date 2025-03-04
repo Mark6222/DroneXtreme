@@ -114,7 +114,7 @@ public partial class @FlightController: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""4e3cabe9-9059-4dda-abd7-6431db7b6e1c"",
-                    ""path"": ""<DualShockGamepad>/leftStick"",
+                    ""path"": ""<Gamepad>/leftStick"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -125,7 +125,7 @@ public partial class @FlightController: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""06b553c0-1503-4328-8216-ebceeca80226"",
-                    ""path"": ""<DualShockGamepad>/rightStick"",
+                    ""path"": ""<Gamepad>/rightStick"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",

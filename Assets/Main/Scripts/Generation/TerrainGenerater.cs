@@ -13,6 +13,8 @@ public class TerrainGenerater : MonoBehaviour
     [SerializeField] private int treeCount = 10000;
     [SerializeField] private float minHeight = 0.2f;
     [SerializeField] private float maxHeight = 0.9f;
+    [SerializeField] private LineRenderer line;
+
     public Texture2D texture;
     public int textureSize = 1000;
     Transform[] pointTransforms;
@@ -68,8 +70,14 @@ public class TerrainGenerater : MonoBehaviour
         Vector3 terrainSize = terrainData.size;
         Vector3 terrainPosition = terrain.transform.position;
 
+        Vector3[] linePositions = new Vector3[pointTransforms.Length];
+        line.positionCount = pointTransforms.Length;
+        int index = 0;
         foreach (Transform point in pointTransforms)
         {
+            index++;
+            if (index == 1) continue;
+            linePositions[index - 2] = point.position;
             float targetHeight = (point.position.y - 20 - terrainPosition.y) / terrainSize.y;
 
             int centerX = Mathf.RoundToInt((point.position.x - terrainPosition.x) / terrainSize.x * (heightmapResolution - 1));
@@ -110,6 +118,10 @@ public class TerrainGenerater : MonoBehaviour
         }
         terrainData.SetAlphamaps(0, 0, splatmap);
         terrainData.SetHeights(0, 0, heights);
+        linePositions[linePositions.Length - 1] = linePositions[linePositions.Length - 2];
+        line.SetPositions(linePositions);
+
+
     }
     public void GenerateTrees()
     {

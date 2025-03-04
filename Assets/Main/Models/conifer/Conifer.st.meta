@@ -38,7 +38,7 @@ SpeedTreeImporter:
     enableSubsurface: 1
     windQuality: 0
   - enableSettingOverride: 0
-    height: 0.6513009
+    height: 0.6475906
     castShadows: 1
     receiveShadows: 1
     useLightProbes: 1
@@ -48,7 +48,7 @@ SpeedTreeImporter:
     enableSubsurface: 1
     windQuality: 0
   - enableSettingOverride: 0
-    height: 0.5212021
+    height: 0.568293
     castShadows: 1
     receiveShadows: 1
     useLightProbes: 1
@@ -58,7 +58,7 @@ SpeedTreeImporter:
     enableSubsurface: 1
     windQuality: 0
   - enableSettingOverride: 0
-    height: 0.4082736
+    height: 0.43398216
     castShadows: 1
     receiveShadows: 1
     useLightProbes: 1
@@ -68,7 +68,7 @@ SpeedTreeImporter:
     enableSubsurface: 1
     windQuality: 0
   - enableSettingOverride: 0
-    height: 0.2904394
+    height: 0.2754157
     castShadows: 1
     receiveShadows: 1
     useLightProbes: 1
@@ -78,7 +78,7 @@ SpeedTreeImporter:
     enableSubsurface: 1
     windQuality: 0
   - enableSettingOverride: 0
-    height: 0.20781311
+    height: 0.21949145
     castShadows: 1
     receiveShadows: 1
     useLightProbes: 1

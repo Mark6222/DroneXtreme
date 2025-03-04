@@ -5,6 +5,8 @@ public class Spawn : MonoBehaviour
 {
     GameObject[] Drones;
     GameObject[] points;
+    public ParticleSystem partival;
+
     public GameObject Prefab;
 
     void Start()
@@ -39,6 +41,6 @@ public class Spawn : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        // partival.Play();
     }
 }

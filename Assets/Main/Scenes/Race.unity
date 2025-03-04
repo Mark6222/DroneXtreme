@@ -217,7 +217,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 525c38f413a0d7f4083416950715c466, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawn: {fileID: 773274240}
+  Prefab: {fileID: 0}
 --- !u!4 &773274240
 Transform:
   m_ObjectHideFlags: 0
@@ -298,7 +298,7 @@ Terrain:
   m_StaticShadowCaster: 0
   m_IgnoreQualitySettings: 0
   m_ReflectionProbeUsage: 1
-  m_MaterialTemplate: {fileID: 10652, guid: 0000000000000000f000000000000000, type: 0}
+  m_MaterialTemplate: {fileID: 2100000, guid: 594ea882c5a793440b60ff72d896021e, type: 2}
   m_BakeLightProbesForTrees: 1
   m_PreserveTreePrototypeLayers: 0
   m_DeringLightProbesForTrees: 1

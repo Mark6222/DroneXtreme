@@ -67,11 +67,6 @@ public class TerrainColorByHeight : MonoBehaviour
 
         terrainData.SetAlphamaps(0, 0, alphaMaps);
     }
-
-    void Update()
-    {
-
-    }
 }
 [CustomEditor(typeof(TerrainColorByHeight))]
 public class MyScriptEditor2 : Editor

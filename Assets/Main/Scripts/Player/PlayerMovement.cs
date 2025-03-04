@@ -74,4 +74,18 @@ public class PlayerMovement : NetworkBehaviour
             rig.AddForce(worldVelocity, ForceMode.VelocityChange);
         }
     }
+    void FixedUpdate()
+    {
+        if (leftStickInput.y > 0)
+        {
+            rig.useGravity = true;
+
+            movementSpeed = leftStickInput.magnitude * maxMovementSpeed * Speed;
+            Vector3 newVelocity = new Vector3(0, leftStickInput.y * movementSpeed, leftStickInput.y * 0.1f);
+            Vector3 worldVelocity = transform.TransformDirection(newVelocity);
+
+            worldVelocity *= speedMultiplier;
+            rig.AddForce(worldVelocity, ForceMode.VelocityChange);
+        }
+    }
 }
