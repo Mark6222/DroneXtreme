@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.Services.Lobbies.Models;
 using UnityEngine;
 
 public class TrickSystem : MonoBehaviour
@@ -6,11 +7,12 @@ public class TrickSystem : MonoBehaviour
     GameObject Drone;
 
     bool Flip, BarrelRoll, DrifTurn, Inverted, DiveBomb;
-    bool TornadoFlip, DiveFlipRoll, DriftTurnDive;
+    [SerializeField] bool TornadoFlip, DiveFlipRoll, DriftTurnDive;
     bool WallRide, GroundKiss, ThreadTheNeedle;
     private Rigidbody rb;
+    private PlayerScore playerScore;
     [SerializeField] private int scoreAdded = 10;
-    [SerializeField] private int Multiplyer = 0;
+    [SerializeField] private int Multiplyer = 1;
     [SerializeField] private LayerMask detectionLayerMask;
     [Header("Test Detection Toggles")]
     [SerializeField] private bool testFlip = false;
@@ -29,6 +31,7 @@ public class TrickSystem : MonoBehaviour
     {
         Drone = gameObject;
         rb = GetComponent<Rigidbody>();
+        playerScore = GetComponent<PlayerScore>();
     }
 
     void Update()
@@ -46,24 +49,131 @@ public class TrickSystem : MonoBehaviour
         if (testDiveFlipRoll) DiveFlipRoll = DetectDiveFlipRoll();
         if (testDriftTurnDive) DriftTurnDive = DetectDriftTurnDive();
 
+        MultiplyerScore();
         // if drone is performing any of these actions then add points to score
-        if (Flip || BarrelRoll || DrifTurn || Inverted || DiveBomb || TornadoFlip || DiveFlipRoll || DriftTurnDive || WallRide || GroundKiss || ThreadTheNeedle)
+        if (Flip) Debug.Log("Action: " + "Flip");
+        if (BarrelRoll) Debug.Log("Action: " + "BarrelRoll");
+        if (DrifTurn) Debug.Log("Action: " + "DrifTurn");
+        if (Inverted) Debug.Log("Action: " + "Inverted");
+        if (DiveBomb) Debug.Log("Action: " + "DiveBomb");
+
+        if (TornadoFlip) Debug.Log("Action: " + "TornadoFlip");
+        if (DiveFlipRoll) Debug.Log("Action: " + "DiveFlipRoll");
+        if (DriftTurnDive) Debug.Log("Action: " + "DriftTurnDive");
+
+        if (WallRide) Debug.Log("Action: " + "WallRide");
+        if (GroundKiss) Debug.Log("Action: " + "GroundKiss");
+        if (ThreadTheNeedle) Debug.Log("Action: " + "ThreadTheNeedle");
+
+        AddScore("Flip", Flip, 0);
+        AddScore("BarrelRoll", BarrelRoll, 0);
+        AddScore("DriftTurn", DrifTurn, 0);
+        AddScore("Inverted", Inverted, 0);
+        AddScore("DiveBomb", DiveBomb, 0);
+
+        AddScore("WallRide", WallRide, 15);
+        AddScore("GroundKiss", GroundKiss, 20);
+        AddScore("ThreadTheNeedle", ThreadTheNeedle, 30);
+
+        if (WallRide) playerScore.AddToScoreToAdd(scoreAdded + 15 * Multiplyer);
+        if (GroundKiss) playerScore.AddToScoreToAdd(scoreAdded + 20 * Multiplyer);
+        if (ThreadTheNeedle) playerScore.AddToScoreToAdd(scoreAdded + 30 * Multiplyer);
+
+        if (!Flip && !BarrelRoll && !DrifTurn && !Inverted && !DiveBomb && !TornadoFlip && !DiveFlipRoll && !DriftTurnDive)
         {
-            if (Flip) Debug.Log("Action: " + "Flip");
-            if (BarrelRoll) Debug.Log("Action: " + "BarrelRoll");
-            if (DrifTurn) Debug.Log("Action: " + "DrifTurn");
-            if (Inverted) Debug.Log("Action: " + "Inverted");
-            if (DiveBomb) Debug.Log("Action: " + "DiveBomb");
-            if (TornadoFlip) Debug.Log("Action: " + "TornadoFlip");
-            if (DiveFlipRoll) Debug.Log("Action: " + "DiveFlipRoll");
-            if (DriftTurnDive) Debug.Log("Action: " + "DriftTurnDive");
-            if (WallRide) Debug.Log("Action: " + "WallRide");
-            if (GroundKiss) Debug.Log("Action: " + "GroundKiss");
-            if (ThreadTheNeedle) Debug.Log("Action: " + "ThreadTheNeedle");
+            playerScore.AddPoints();
+            playerScore.ResetScoreToAdd();
+        }
+    }
+    private Dictionary<string, float> actionTimers = new();
+    private Dictionary<string, int> scoreMultipliers = new();
+    private Dictionary<string, float> coolDownTimers = new();
+
+    void AddScore(string actionName, bool actionActive, int bonus)
+    {
+        if(!actionActive){
+            if (coolDownTimers.ContainsKey(actionName) && coolDownTimers[actionName] > 0)
+            {
+                coolDownTimers[actionName] -= Time.deltaTime;
+                return;
+            }
+        }
+        if (!actionActive && coolDownTimers[actionName] <= 0)
+        {
+            actionTimers.Remove(actionName);
+            scoreMultipliers.Remove(actionName);
+            return;
+        }
+        if (!actionTimers.ContainsKey(actionName))
+        {
+            actionTimers[actionName] = 0f;
+            scoreMultipliers[actionName] = Multiplyer;
+            coolDownTimers[actionName] = 2f;
+        }
+        actionTimers[actionName] += Time.deltaTime;
+        if (actionTimers[actionName] > 1f && scoreMultipliers[actionName] > 0)
+        {
+            scoreMultipliers[actionName]--;
+        }
+        int finalMultiplier = Mathf.Max(scoreMultipliers[actionName], 0);
+        playerScore.AddToScoreToAdd((scoreAdded + bonus) * finalMultiplier);
+    }
+    private float TornadoFlipTimer, DiveFlipRollTimer, DriftTurnDiveTimer = 0f;
+    private bool TornadoFlipStarted, DiveFlipRollStarted, DriftTurnDiveStarted = false;
+    void MultiplyerScore()
+    {
+
+        Multiplyer = 1;
+        if (TornadoFlip && !TornadoFlipStarted)
+        {
+            Multiplyer = Multiplyer + 1;
+            TornadoFlipStarted = true;
+        }
+        else if (TornadoFlipStarted)
+        {
+            Multiplyer = Multiplyer + 1;
+            TornadoFlipTimer += Time.deltaTime;
+            if (TornadoFlipTimer >= 5f)
+            {
+                TornadoFlipStarted = false;
+                TornadoFlipTimer = 0f;
+            }
+        }
+
+        if (DiveFlipRoll && !DiveFlipRollStarted)
+        {
+            Multiplyer = Multiplyer + 1;
+            DiveFlipRollStarted = true;
+        }
+        else if (DiveFlipRollStarted)
+        {
+            Multiplyer = Multiplyer + 1;
+            DiveFlipRollTimer += Time.deltaTime;
+            if (DiveFlipRollTimer >= 5f)
+            {
+                DiveFlipRollStarted = false;
+                DiveFlipRollTimer = 0f;
+            }
+        }
+
+        if (DriftTurnDive && !DriftTurnDiveStarted)
+        {
+            Multiplyer = Multiplyer + 1;
+            DriftTurnDiveStarted = true;
+        }
+        else if (DriftTurnDiveStarted)
+        {
+            Multiplyer = Multiplyer + 1;
+            DriftTurnDiveTimer += Time.deltaTime;
+            if (DriftTurnDiveTimer >= 5f)
+            {
+                DriftTurnDiveStarted = false;
+                DriftTurnDiveTimer = 0f;
+            }
         }
     }
 
-    private bool isFlipping;
+
     [Header("basic movemnet tricks")]
     [SerializeField] private float flipThreshold = 2.5f;
     [SerializeField] private float notFlipThreshold = 3f;

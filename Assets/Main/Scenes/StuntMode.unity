@@ -420,19 +420,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6cd9692361246714c97603504152890f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TornadoFlip: 0
+  DiveFlipRoll: 0
+  DriftTurnDive: 0
   scoreAdded: 10
   Multiplyer: 0
   detectionLayerMask:
     serializedVersion: 2
     m_Bits: 63
-  testFlip: 0
-  testBarrelRoll: 0
-  testDrifTurn: 0
-  testInverted: 0
-  testDiveBomb: 0
-  testTornadoFlip: 0
-  testDiveFlipRoll: 0
-  testDriftTurnDive: 0
+  testFlip: 1
+  testBarrelRoll: 1
+  testDrifTurn: 1
+  testInverted: 1
+  testDiveBomb: 1
+  testTornadoFlip: 1
+  testDiveFlipRoll: 1
+  testDriftTurnDive: 1
   testWallRide: 1
   testGroundKiss: 1
   testThreadTheNeedle: 1
@@ -459,6 +462,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   score: 0
+  scoreToAdd: 0
 --- !u!1 &858316206
 GameObject:
   m_ObjectHideFlags: 0
@@ -549,7 +553,7 @@ GameObject:
   - component: {fileID: 1048712243}
   - component: {fileID: 1048712242}
   - component: {fileID: 1048712241}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Terrain
   m_TagString: Untagged
   m_Icon: {fileID: 0}
