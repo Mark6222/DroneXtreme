@@ -256,10 +256,10 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: e6410546462024c4f87fb31cd9433fb9, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 6746686212671457602}
+      addedObject: {fileID: 5891119917337846358}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: e6410546462024c4f87fb31cd9433fb9, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 5891119917337846358}
+      addedObject: {fileID: 6746686212671457602}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: e6410546462024c4f87fb31cd9433fb9, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7460420231749922246}
@@ -281,6 +281,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: e6410546462024c4f87fb31cd9433fb9, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1163967174373959726}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: e6410546462024c4f87fb31cd9433fb9, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5601115096392314765}
     - targetCorrespondingSourceObject: {fileID: -4537536451913819529, guid: e6410546462024c4f87fb31cd9433fb9, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6883423781570883896}
@@ -304,31 +307,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: e6410546462024c4f87fb31cd9433fb9, type: 3}
   m_PrefabInstance: {fileID: 3733263365895263226}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &6746686212671457602
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4543673053294866091}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 3626803980
-  InScenePlacedSourceGlobalObjectIdHash: 1329564966
-  DeferredDespawnTick: 0
-  Ownership: 1
-  AlwaysReplicateAsRoot: 0
-  SynchronizeTransform: 1
-  ActiveSceneSynchronization: 0
-  SceneMigrationSynchronization: 1
-  SpawnWithObservers: 1
-  DontDestroyWithOwner: 0
-  AutoObjectParentSync: 1
-  SyncOwnerTransformWhenParented: 1
-  AllowOwnerToParent: 0
 --- !u!114 &5891119917337846358
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -346,6 +324,31 @@ MonoBehaviour:
   SpeedText: {fileID: 0}
   maxRange: 8
   proxyMeterUI: []
+--- !u!114 &6746686212671457602
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4543673053294866091}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 3626803980
+  InScenePlacedSourceGlobalObjectIdHash: 3626803980
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
 --- !u!114 &7460420231749922246
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -509,8 +512,8 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 7276a5ef768a33b4e85da0c3cf3e8ed2, type: 3}
-  m_Resource: {fileID: 8300000, guid: 7276a5ef768a33b4e85da0c3cf3e8ed2, type: 3}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -596,6 +599,21 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &5601115096392314765
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4543673053294866091}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8211529fd6652be419b46384050124c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  audioSource: {fileID: 0}
+  droneLanding: {fileID: 8300000, guid: 72248afe8df98334cb3d37bb973d2cfa, type: 3}
+  droneFlying: {fileID: 8300000, guid: e3b2857410bc6de47ba5933fb77d2343, type: 3}
 --- !u!1 &6887965207889788521 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -1415888828485358189, guid: e6410546462024c4f87fb31cd9433fb9, type: 3}

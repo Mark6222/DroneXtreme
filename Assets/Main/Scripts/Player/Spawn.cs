@@ -24,23 +24,28 @@ public class Spawn : MonoBehaviour
             yield return null;
         }
         points = GameObject.FindGameObjectsWithTag("Point");
+
+        Transform spawnPoint = points[0].transform;
+        Vector3 spawnPosition = spawnPoint.position - spawnPoint.forward * 2f;
+
         if (PlayerPrefs.GetInt("IsMultiplayer") == 1)
         {
             Drones = GameObject.FindGameObjectsWithTag("Drone");
             foreach (GameObject drone in Drones)
             {
-                drone.transform.position = points[0].transform.position;
+                drone.transform.position = spawnPosition;
+                drone.transform.rotation = spawnPoint.rotation;
             }
         }
         else
         {
-            Instantiate(Prefab, points[0].transform.position, Quaternion.identity);
+            Instantiate(Prefab, spawnPosition, Quaternion.identity);
         }
     }
 
     // Update is called once per frame
     void Update()
     {
-        // partival.Play();
+        partival.Play();
     }
 }
