@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class PlayerScore : MonoBehaviour
@@ -23,7 +24,7 @@ public class PlayerScore : MonoBehaviour
 
     public void AddToScoreToAdd(int addScore)
     {
-        scoreToAdd = addScore;
+        scoreToAdd = scoreToAdd + addScore;
     }
 
     public int GetScoreToAdd()
