@@ -8,7 +8,7 @@ public class TrickSystem : MonoBehaviour
 {
     GameObject Drone;
     TextMeshProUGUI mutiplyerText, addedScoreText, playerScoreText, actionsTextOne, actionsTextTwo, actionsTextThree;
-    GameObject actionTexts;
+    GameObject actionTexts, scoringUI, scores;
     bool Flip, BarrelRoll, DrifTurn, Inverted, DiveBomb;
     [SerializeField] bool TornadoFlip, DiveFlipRoll, DriftTurnDive;
     bool WallRide, GroundKiss, ThreadTheNeedle;
@@ -17,6 +17,8 @@ public class TrickSystem : MonoBehaviour
     [SerializeField] private int scoreAdded = 10;
     [SerializeField] private int Multiplyer = 1;
     [SerializeField] private LayerMask detectionLayerMask;
+    [SerializeField] private LayerMask detectionTerrainLayerMask;
+
     [Header("Test Detection Toggles")]
     [SerializeField] private bool testFlip = false;
     [SerializeField] private bool testBarrelRoll = false;
@@ -43,12 +45,17 @@ public class TrickSystem : MonoBehaviour
         actionsTextOne = GameObject.Find("ActionsTextOne").GetComponent<TextMeshProUGUI>();
         actionsTextTwo = GameObject.Find("ActionsTextTwo").GetComponent<TextMeshProUGUI>();
         actionsTextThree = GameObject.Find("ActionsTextThree").GetComponent<TextMeshProUGUI>();
+        scores = GameObject.Find("Scores");
+        scoringUI = GameObject.Find("ScoringUI");
         actionTexts = GameObject.Find("ActionTexts");
 
         UiAnimators.Add("MultiplyerText", mutiplyerText.GetComponent<Animator>());
         UiAnimators.Add("ScoreToAddText", addedScoreText.GetComponent<Animator>());
         UiAnimators.Add("PlayerScoreText", playerScoreText.GetComponent<Animator>());
         UiAnimators.Add("ActionTexts", actionTexts.GetComponent<Animator>());
+        UiAnimators.Add("Scores", scores.GetComponent<Animator>());
+        UiAnimators.Add("ScoringUI", scoringUI.GetComponent<Animator>());
+        actions.Add("  ");
     }
     float addScoreTimer = 0.5f;
     void Update()
@@ -100,24 +107,25 @@ public class TrickSystem : MonoBehaviour
         if (addScoreTimer <= 0f && !Flip && !BarrelRoll && !DrifTurn && !Inverted && !DiveBomb && !TornadoFlip && !DiveFlipRoll && !DriftTurnDive && !WallRide && !GroundKiss && !ThreadTheNeedle)
         {
             playerScore.AddPoints();
-            if (playerScore.GetScoreToAdd() > 0) UiAnimators["PlayerScoreText"].SetTrigger("Trigger");
+            if (playerScore.GetScoreToAdd() > 0) UiAnimators["Scores"].SetTrigger("scoreBash");
             playerScore.ResetScoreToAdd();
             UpdatePlayerUI();
-            if (actions.Count > 0) actions.RemoveAt(0);
-            if (actions.Count > 0) actions.RemoveAt(0);
         }
         UpdateActionsText();
     }
     void UpdatePlayerUI()
     {
-        playerScoreText.text = "Player Score: " + playerScore.GetScore();
+        playerScoreText.text = "" + playerScore.GetScore();
         addedScoreText.text = "" + playerScore.GetScoreToAdd();
         mutiplyerText.text = "X" + Multiplyer;
     }
     List<string> actions = new();
     void UpdateActionsText()
     {
-
+        if (actions.Count == 0)
+        {
+            actions.Add("  ");
+        }
         if (Flip) actions.Add("Flip");
         if (BarrelRoll) actions.Add("BarrelRoll");
         if (DrifTurn) actions.Add("DrifTurn");
@@ -136,23 +144,17 @@ public class TrickSystem : MonoBehaviour
     void ShowActionsText()
     {
         actionsCooldown += Time.deltaTime;
-        if (actionsCooldown < 0.5f || actions.Count == 0)
+        if (actionsCooldown > 1f)
         {
-            actionsTextOne.text = "";
-            return;
+            if (actions.Count > 0) actions.RemoveAt(0);
+            actionsCooldown = 0f;
+            UiAnimators["ActionTexts"].SetTrigger("ActionsTriggered");
         }
-        actionsTextOne.text = actions.Count > 0 ? actions[0] : "";
-        actionsTextTwo.text = actions.Count > 1 ? actions[1] : "";
-        actionsTextThree.text = actions.Count > 2 ? actions[2] : "";
-        if (actions.Count > 3)
-        {
-            actions.RemoveAt(0);
-        }
-        actionsCooldown = 0f;
-        UiAnimators["ActionTexts"].SetTrigger("ActionsTriggered");
+        actionsTextOne.text = actions.Count > 1 ? actions[1] : "";
+        actionsTextTwo.text = actions.Count > 2 ? actions[2] : "";
+        actionsTextThree.text = actions.Count > 3 ? actions[3] : "";
     }
     private Dictionary<string, float> actionTimers = new();
-    private Dictionary<string, int> scoreMultipliers = new();
     private Dictionary<string, float> coolDownTimers = new();
 
     void AddScore(string actionName, bool actionActive, int score, int bonus)
@@ -169,26 +171,20 @@ public class TrickSystem : MonoBehaviour
         if (!actionActive && coolDownTimers.ContainsKey(actionName) && coolDownTimers[actionName] <= 0)
         {
             actionTimers.Remove(actionName);
-            scoreMultipliers.Remove(actionName);
             coolDownTimers.Remove(actionName);
             return;
         }
         if (!actionTimers.ContainsKey(actionName))
         {
             actionTimers[actionName] = 0f;
-            scoreMultipliers[actionName] = 3;
             coolDownTimers[actionName] = 2f;
         }
         actionTimers[actionName] += Time.deltaTime;
-        if (actionTimers[actionName] > 1f && scoreMultipliers[actionName] > 0)
-        {
-            scoreMultipliers[actionName]--;
-        }
         if (actionActive)
         {
-            int finalMultiplier = Mathf.Max(scoreMultipliers[actionName], 0);
-            int scoreToAdd = (score + bonus) * finalMultiplier;
-            playerScore.AddToScoreToAdd(scoreToAdd);
+            int scoreToAdd = (score + bonus) * Multiplyer;
+            if (actionName != "ThreadTheNeedle") playerScore.AddToScoreToAdd(scoreToAdd);
+            else { playerScore.AddToScoreToAdd(ThreadTheNeedleScoreToAdd); ThreadTheNeedleScoreToAdd = 0; }
             UiAnimators["ScoreToAddText"].SetTrigger("Trigger");
             UpdatePlayerUI();
         }
@@ -203,11 +199,11 @@ public class TrickSystem : MonoBehaviour
         {
             Multiplyer = Multiplyer + 1;
             TornadoFlipStarted = true;
+            UiAnimators["MultiplyerText"].SetTrigger("MultTrigger");
         }
         else if (TornadoFlipStarted)
         {
             Multiplyer = Multiplyer + 1;
-            UiAnimators["MultiplyerText"].SetTrigger("MultTrigger");
             TornadoFlipTimer += Time.deltaTime;
             if (TornadoFlipTimer >= 5f)
             {
@@ -310,7 +306,7 @@ public class TrickSystem : MonoBehaviour
                 StartedInvertedTimer = true;
             }
             invertedTimer += Time.deltaTime;
-            if (invertedTimer >= 2f)
+            if (invertedTimer >= 1f)
             {
                 StartedInvertedTimer = false;
                 invertedTimer = 0f;
@@ -336,7 +332,7 @@ public class TrickSystem : MonoBehaviour
                 StartedDiveBombTimer = true;
             }
             diveBombTimer += Time.deltaTime;
-            if (diveBombTimer >= 2f)
+            if (diveBombTimer >= 1f)
             {
                 StartedDiveBombTimer = false;
                 diveBombTimer = 0f;
@@ -380,20 +376,20 @@ public class TrickSystem : MonoBehaviour
         }
         return false;
     }
-    [SerializeField] private float groundDistance = 1.5f;
+    [SerializeField] private float groundDistance = 2f;
     float groundKissTimer = 0f;
     bool StartedGroundKissTimer = false;
     private bool DetectGroundKiss() // Fly to close to the ground
     {
         Debug.DrawRay(transform.position, Vector3.down * groundDistance, Color.red);
-        if (Physics.Raycast(transform.position, Vector3.down, groundDistance) && rb.linearVelocity.magnitude > speedThreshold)
+        if (Physics.Raycast(transform.position, Vector3.down, groundDistance, detectionTerrainLayerMask) && rb.linearVelocity.magnitude > speedThreshold)
         {
             if (!StartedGroundKissTimer)
             {
                 StartedGroundKissTimer = true;
             }
             groundKissTimer += Time.deltaTime;
-            if (groundKissTimer >= 2f)
+            if (groundKissTimer >= 0.5f)
             {
                 StartedGroundKissTimer = false;
                 groundKissTimer = 0f;
@@ -408,6 +404,8 @@ public class TrickSystem : MonoBehaviour
         return false;
     }
     [SerializeField] private float detectionDistance = 2f;
+    bool StartedThreadTheNeedle = false;
+    int ThreadTheNeedleScoreToAdd = 0;
     private bool DetectThreadTheNeedle() // Fly through tight space
     {
         Vector3[] directions = { transform.right, -transform.right, transform.up, -transform.up, transform.forward, -transform.forward };
@@ -422,7 +420,16 @@ public class TrickSystem : MonoBehaviour
         }
         if (tight == 3 && rb.linearVelocity.magnitude > speedThreshold)
         {
-            return true;
+            ThreadTheNeedleScoreToAdd += 1;
+            StartedThreadTheNeedle = true;
+        }
+        else
+        {
+            if (StartedThreadTheNeedle)
+            {
+                StartedThreadTheNeedle = false;
+                return true;
+            }
         }
         return false;
     }
@@ -431,7 +438,8 @@ public class TrickSystem : MonoBehaviour
     {
         if (actions.Count > 1)
         {
-            if ((actions[actions.Count - 1] == "Flip" && actions[actions.Count - 2] == "BarrelRoll") || (actions[actions.Count - 2] == "Flip" && actions[actions.Count - 1] == "BarrelRoll"))
+            if ((actions[actions.Count - 1] == "Flip" && actions[actions.Count - 2] == "BarrelRoll") ||
+            (actions[actions.Count - 2] == "Flip" && actions[actions.Count - 1] == "BarrelRoll"))
             {
                 return true;
             }
@@ -442,19 +450,35 @@ public class TrickSystem : MonoBehaviour
 
     bool DetectDiveFlipRoll() // While Diving you do a flip or roll
     {
-
-        if ((Flip && DiveBomb) || (BarrelRoll && DiveBomb))
+        if (actions.Count > 1)
         {
-            return true;
+            if (((actions[actions.Count - 1] == "Flip" && actions[actions.Count - 2] == "DiveBomb") || (actions[actions.Count - 2] == "Flip" && actions[actions.Count - 1] == "DiveBomb")) ||
+            ((actions[actions.Count - 1] == "DiveBomb" && actions[actions.Count - 2] == "BarrelRoll") || (actions[actions.Count - 2] == "DiveBomb" && actions[actions.Count - 1] == "BarrelRoll")))
+            {
+                return true;
+            }
         }
         return false;
+
     }
     bool DetectDriftTurnDive() // While Drifting you Dive
     {
-        if (DrifTurn && DiveBomb)
+        if (actions.Count > 1)
         {
-            return true;
+            if ((actions[actions.Count - 1] == "DriftTurn" && actions[actions.Count - 2] == "DiveBomb") ||
+            (actions[actions.Count - 2] == "DriftTurn" && actions[actions.Count - 1] == "DiveBomb"))
+            {
+                return true;
+            }
         }
         return false;
+    }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        playerScore.ResetScoreToAdd();
+        actions.Clear();
+        actions.Add("!COLLIDED!");
+        UiAnimators["ScoringUI"].SetTrigger("collided");
     }
 }

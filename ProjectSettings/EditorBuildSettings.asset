@@ -20,5 +20,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Main/Scenes/ProceduralGeneration.unity
     guid: 5fa4174739e81464e9cb122a9816a6a2
+  - enabled: 1
+    path: Assets/Main/Scenes/StuntMode.unity
+    guid: dc4fb273f08fba6418a93dcae06bddb5
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0
