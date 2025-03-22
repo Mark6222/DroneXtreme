@@ -5479,7 +5479,7 @@ MonoBehaviour:
     LoadSceneTimeOut: 120
     SpawnTimeout: 10
     EnableNetworkLogs: 1
-    NetworkTopology: 0
+    NetworkTopology: 1
     UseCMBService: 0
     AutoSpawnPlayerPrefabClientSide: 1
     NetworkMessageMetrics: 1
@@ -10865,6 +10865,10 @@ PrefabInstance:
     - target: {fileID: 4543673053294866091, guid: 945ff863d1f1bea469dfc2e31f6db04e, type: 3}
       propertyPath: m_Name
       value: Drone 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5230430725512013007, guid: 945ff863d1f1bea469dfc2e31f6db04e, type: 3}
+      propertyPath: AuthorityMode
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6746686212671457602, guid: 945ff863d1f1bea469dfc2e31f6db04e, type: 3}
       propertyPath: GlobalObjectIdHash

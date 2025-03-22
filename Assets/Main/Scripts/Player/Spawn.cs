@@ -35,6 +35,7 @@ public class Spawn : MonoBehaviour
             {
                 drone.transform.position = spawnPosition;
                 drone.transform.rotation = spawnPoint.rotation;
+                drone.transform.LookAt(spawnPoint);
             }
         }
         else

@@ -49,7 +49,7 @@ public class ProcedurelGeneration : MonoBehaviour
                 Vector3 right = new Vector3(-forward.z, 0, forward.x);
 
                 float moveX = UnityEngine.Random.Range(-prevRandomX + 20, prevRandomX + 20);
-                float moveY = UnityEngine.Random.Range(-prevRandomY + 20, prevRandomY + 20);
+                float moveY = UnityEngine.Random.Range(-prevRandomY + 10, prevRandomY + 10);
                 prevRandomX = moveX;
                 prevRandomY = moveY;
                 Vector3 offset = (right * moveX) + (Vector3.up * moveY);

@@ -30,7 +30,7 @@ public class TerrainColorByHeight : MonoBehaviour
         {
             for (int y = 0; y < height; y++)
             {
-                float num = terrainData.GetHeight(x, y);
+                float num = terrainData.GetHeight(y, x);
                 if (num > max)
                 {
                     max = num;

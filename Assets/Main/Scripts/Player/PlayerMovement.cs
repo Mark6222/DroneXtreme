@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 using Unity.Netcode;
 using Unity.Collections;
 using NUnit.Framework;
+using Unity.VisualScripting;
 public class PlayerMovement : NetworkBehaviour
 {
     public bool isClient, isOwner = false;
@@ -35,21 +36,21 @@ public class PlayerMovement : NetworkBehaviour
     }
     public override void OnNetworkSpawn()
     {
-        if (IsOwner)
+        if(IsOwner || Offline)
         {
             Debug.Log("Player spawned: " + gameObject.name);
         }
     }
     public void OnLeftStick(InputValue inputValue)
     {
-        if (IsOwner)
+        if(IsOwner || Offline)
         {
             leftStickInput = inputValue.Get<Vector2>();
         }
     }
     public void OnRightStick(InputValue inputValue)
     {
-        if (IsOwner)
+        if(IsOwner || Offline)
         {
             rightStickInput = inputValue.Get<Vector2>();
         }
@@ -58,7 +59,8 @@ public class PlayerMovement : NetworkBehaviour
     {
         isOwner = IsOwner;
         isClient = IsClient;
-        ControlDrone();
+        // Or Oflfine 
+        if(IsOwner || Offline)ControlDrone();
     }
     void ControlDrone()
     {

@@ -45,6 +45,7 @@ public class TrickSystem : NetworkBehaviour
 
         if (!Offline) SceneManager.sceneLoaded += OnSceneLoaded;
         else init();
+        if(Offline || IsOwner) init();
     }
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
@@ -55,23 +56,15 @@ public class TrickSystem : NetworkBehaviour
             enabled = true;
             if (Offline) init();
             else if (IsOwner) init();
-            else if (IsClient)
-            {
-                Canvas.SetActive(false);
-            }
-        }
-        else
-        {
-            Canvas.SetActive(false);
         }
     }
     void init()
     {
-        if (SceneManager.GetActiveScene().name == "StuntMode" && Offline)
+        if (SceneManager.GetActiveScene().name == "StuntMode")
         {
             if(Offline) Canvas.SetActive(true);
-            if(IsOwner) Canvas.SetActive(true);
-            if(IsClient) Canvas.SetActive(false);
+            else if(IsOwner) Canvas.SetActive(true);
+            else Canvas.SetActive(false);
         }
         Debug.Log("Trick System Initialized");
         Drone = gameObject;
