@@ -232,6 +232,7 @@ public class TerrainGenerater : MonoBehaviour
         Debug.Log("Heightmap applied to terrain!");
     }
 }
+#if UNITY_EDITOR
 [CustomEditor(typeof(TerrainGenerater))]
 public class MyScriptEditor3 : Editor
 {
@@ -247,3 +248,4 @@ public class MyScriptEditor3 : Editor
         }
     }
 }
+#endif

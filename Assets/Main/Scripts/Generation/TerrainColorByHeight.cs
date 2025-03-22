@@ -68,6 +68,7 @@ public class TerrainColorByHeight : MonoBehaviour
         terrainData.SetAlphamaps(0, 0, alphaMaps);
     }
 }
+#if UNITY_EDITOR
 [CustomEditor(typeof(TerrainColorByHeight))]
 public class MyScriptEditor2 : Editor
 {
@@ -83,3 +84,4 @@ public class MyScriptEditor2 : Editor
         }
     }
 }
+#endif

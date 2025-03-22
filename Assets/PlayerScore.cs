@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class PlayerScore : MonoBehaviour
+public class PlayerScore
 {
     [SerializeField] private int score;
     [SerializeField] private int scoreToAdd;

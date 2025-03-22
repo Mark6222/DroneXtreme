@@ -1,14 +1,7 @@
-using System;
-using System.Drawing;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.Experimental.GlobalIllumination;
 using UnityEngine.Splines;
-using System.Reflection;
-using Unity.Entities;
-using Unity.Collections;
-using Unity.VisualScripting;
-using Mono.Cecil;
+
 public class ProcedurelGeneration : MonoBehaviour
 {
     [SerializeField] private GameObject splineObject;
@@ -87,6 +80,7 @@ public class ProcedurelGeneration : MonoBehaviour
 
     }
 }
+#if UNITY_EDITOR
 [CustomEditor(typeof(ProcedurelGeneration))]
 public class MyScriptEditor : Editor
 {
@@ -106,3 +100,4 @@ public class MyScriptEditor : Editor
         }
     }
 }
+#endif

@@ -3,12 +3,15 @@ using System.Threading;
 using TMPro;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
+using Unity.Netcode;
+using UnityEngine.SceneManagement;
+using NUnit.Framework;
 
-public class TrickSystem : MonoBehaviour
+public class TrickSystem : NetworkBehaviour
 {
     GameObject Drone;
-    TextMeshProUGUI mutiplyerText, addedScoreText, playerScoreText, actionsTextOne, actionsTextTwo, actionsTextThree;
-    GameObject actionTexts, scoringUI, scores;
+    public TextMeshProUGUI mutiplyerText, addedScoreText, playerScoreText, actionsTextOne, actionsTextTwo, actionsTextThree;
+    public GameObject actionTexts, scoringUI, scores;
     bool Flip, BarrelRoll, DrifTurn, Inverted, DiveBomb;
     [SerializeField] bool TornadoFlip, DiveFlipRoll, DriftTurnDive;
     bool WallRide, GroundKiss, ThreadTheNeedle;
@@ -32,22 +35,56 @@ public class TrickSystem : MonoBehaviour
     [SerializeField] private bool testGroundKiss = false;
     [SerializeField] private bool testThreadTheNeedle = false;
     private Dictionary<string, Animator> UiAnimators = new();
-
+    public bool Offline = true;
+    public GameObject Canvas;
     void Start()
     {
+        Canvas.SetActive(false);
+        playerScore = new PlayerScore();
+        Offline = !IsClient && !IsOwner;
+
+        if (!Offline) SceneManager.sceneLoaded += OnSceneLoaded;
+        else init();
+    }
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        Debug.Log("Scene Loaded: " + scene.name);
+        Offline = !IsClient && !IsOwner;
+        if (scene.name == "StuntMode")
+        {
+            enabled = true;
+            if (Offline) init();
+            else if (IsOwner) init();
+            else if (IsClient)
+            {
+                Canvas.SetActive(false);
+            }
+        }
+        else
+        {
+            Canvas.SetActive(false);
+        }
+    }
+    void init()
+    {
+        if (SceneManager.GetActiveScene().name == "StuntMode" && Offline)
+        {
+            if(Offline) Canvas.SetActive(true);
+            if(IsOwner) Canvas.SetActive(true);
+            if(IsClient) Canvas.SetActive(false);
+        }
+        Debug.Log("Trick System Initialized");
         Drone = gameObject;
         rb = GetComponent<Rigidbody>();
-        playerScore = GetComponent<PlayerScore>();
 
-        mutiplyerText = GameObject.Find("MultiplyerText").GetComponent<TextMeshProUGUI>();
-        addedScoreText = GameObject.Find("ScoreToAddText").GetComponent<TextMeshProUGUI>();
-        playerScoreText = GameObject.Find("PlayerScoreText").GetComponent<TextMeshProUGUI>();
-        actionsTextOne = GameObject.Find("ActionsTextOne").GetComponent<TextMeshProUGUI>();
-        actionsTextTwo = GameObject.Find("ActionsTextTwo").GetComponent<TextMeshProUGUI>();
-        actionsTextThree = GameObject.Find("ActionsTextThree").GetComponent<TextMeshProUGUI>();
-        scores = GameObject.Find("Scores");
-        scoringUI = GameObject.Find("ScoringUI");
-        actionTexts = GameObject.Find("ActionTexts");
+        // mutiplyerText = GameObject.Find("MultiplyerText").GetComponent<TextMeshProUGUI>();
+        // addedScoreText = GameObject.Find("ScoreToAddText").GetComponent<TextMeshProUGUI>();
+        // actionsTextOne = GameObject.Find("ActionsTextOne").GetComponent<TextMeshProUGUI>();
+        // actionsTextTwo = GameObject.Find("ActionsTextTwo").GetComponent<TextMeshProUGUI>();
+        // actionsTextThree = GameObject.Find("ActionsTextThree").GetComponent<TextMeshProUGUI>();
+        // scores = GameObject.Find("Scores");
+        // scoringUI = GameObject.Find("ScoringUI");
+        // actionTexts = GameObject.Find("ActionTexts");
 
         UiAnimators.Add("MultiplyerText", mutiplyerText.GetComponent<Animator>());
         UiAnimators.Add("ScoreToAddText", addedScoreText.GetComponent<Animator>());
@@ -59,6 +96,13 @@ public class TrickSystem : MonoBehaviour
     }
     float addScoreTimer = 0.5f;
     void Update()
+    {
+        if (Offline || IsOwner)
+        {
+            Run();
+        }
+    }
+    void Run()
     {
         // Detect if the drone is performing any of these actions and set the booleans accordingly
         if (testFlip) Flip = DetectFlip();
