@@ -37,6 +37,7 @@ public class TrickSystem : NetworkBehaviour
     private Dictionary<string, Animator> UiAnimators = new();
     public bool Offline = true;
     public GameObject Canvas;
+    bool inStuntMode = false;
     void Start()
     {
         Canvas.SetActive(false);
@@ -45,7 +46,7 @@ public class TrickSystem : NetworkBehaviour
 
         if (!Offline) SceneManager.sceneLoaded += OnSceneLoaded;
         else init();
-        if(Offline || IsOwner) init();
+        if (Offline || IsOwner) init();
     }
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
@@ -62,10 +63,12 @@ public class TrickSystem : NetworkBehaviour
     {
         if (SceneManager.GetActiveScene().name == "StuntMode")
         {
-            if(Offline) Canvas.SetActive(true);
-            else if(IsOwner) Canvas.SetActive(true);
+            inStuntMode = true;
+            if (Offline) Canvas.SetActive(true);
+            else if (IsOwner) Canvas.SetActive(true);
             else Canvas.SetActive(false);
         }
+        else { inStuntMode = false; return; }
         Debug.Log("Trick System Initialized");
         Drone = gameObject;
         rb = GetComponent<Rigidbody>();
@@ -90,7 +93,7 @@ public class TrickSystem : NetworkBehaviour
     float addScoreTimer = 0.5f;
     void Update()
     {
-        if (Offline || IsOwner)
+        if ((Offline || IsOwner) && inStuntMode)
         {
             Run();
         }
@@ -513,9 +516,12 @@ public class TrickSystem : NetworkBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        playerScore.ResetScoreToAdd();
-        actions.Clear();
-        actions.Add("!COLLIDED!");
-        UiAnimators["ScoringUI"].SetTrigger("collided");
+        if (inStuntMode)
+        {
+            playerScore.ResetScoreToAdd();
+            actions.Clear();
+            actions.Add("!COLLIDED!");
+            UiAnimators["ScoringUI"].SetTrigger("collided");
+        }
     }
 }

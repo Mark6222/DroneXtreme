@@ -11,7 +11,6 @@ public class TerrainColorByHeight : MonoBehaviour
 
     void Start()
     {
-        HeightColoring();
     }
 
     public void HeightColoring()
@@ -19,7 +18,7 @@ public class TerrainColorByHeight : MonoBehaviour
         TerrainData terrainData = terrain.terrainData;
         terrainData.terrainLayers = terrainLayers;
         int width = terrainData.alphamapWidth;
-        int height = terrainData.alphamapHeight;
+        int height = terrainData.alphamapHeight;  
         int layers = terrainData.alphamapLayers;
 
         float[,,] alphaMaps = terrainData.GetAlphamaps(0, 0, width, height);

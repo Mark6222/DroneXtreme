@@ -36,21 +36,21 @@ public class PlayerMovement : NetworkBehaviour
     }
     public override void OnNetworkSpawn()
     {
-        if(IsOwner || Offline)
+        if (IsOwner || Offline)
         {
             Debug.Log("Player spawned: " + gameObject.name);
         }
     }
     public void OnLeftStick(InputValue inputValue)
     {
-        if(IsOwner || Offline)
+        if (IsOwner || Offline)
         {
             leftStickInput = inputValue.Get<Vector2>();
         }
     }
     public void OnRightStick(InputValue inputValue)
     {
-        if(IsOwner || Offline)
+        if (IsOwner || Offline)
         {
             rightStickInput = inputValue.Get<Vector2>();
         }
@@ -60,8 +60,15 @@ public class PlayerMovement : NetworkBehaviour
         isOwner = IsOwner;
         isClient = IsClient;
         // Or Oflfine 
-        if(IsOwner || Offline)ControlDrone();
+        if (IsOwner || Offline) ControlDrone();
     }
+    // void FixedUpdate()
+    // {
+    //     isOwner = IsOwner;
+    //     isClient = IsClient;
+    //     // Or Oflfine 
+    //     if (IsOwner || Offline) ControlDrone();
+    // }
     void ControlDrone()
     {
         Vector3 rotationVelocity = new Vector3(rightStickInput.x * rotationSpeed * rightStickInput.magnitude, leftStickInput.x * rotationSpeed * leftStickInput.magnitude, rightStickInput.y * rotationSpeed * rightStickInput.magnitude);

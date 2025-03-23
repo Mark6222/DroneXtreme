@@ -12,7 +12,7 @@ public class ProcedurelGeneration : MonoBehaviour
     public int amplitude = 20;
     public int randomNum = 30;
     float prevRandomX, prevRandomY, prevRandomZ;
-
+    public bool complete = false;
     GameObject[] points;
     public Vector3[] pointTransforms;
     void Start()
@@ -25,6 +25,7 @@ public class ProcedurelGeneration : MonoBehaviour
     }
     public void SpawnPoints()
     {
+        complete = true;
         pointTransforms = new Vector3[RaceSize];
         points = new GameObject[RaceSize];
         float x, y, z;
@@ -65,6 +66,9 @@ public class ProcedurelGeneration : MonoBehaviour
             // }
             splineContainer.Spline.Closed = true;
         }
+        complete = true;
+        gameObject.GetComponent<PointsManager>().managePoints = true;
+        gameObject.GetComponent<TerrainGenerater>().Generate();
     }
     int num = 0;
     bool Once = true;

@@ -1,10 +1,8 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.Mathematics;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.Splines;
 
 public class TerrainGenerater : MonoBehaviour
 {
@@ -26,26 +24,27 @@ public class TerrainGenerater : MonoBehaviour
 
     void Start()
     {
-        StartCoroutine(RunForTenSeconds());
     }
 
-    IEnumerator RunForTenSeconds()
+    public void Generate()
     {
-        float duration = 2;
-        float elapsedTime = 0f;
-        while (elapsedTime < duration)
-        {
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
-
+        StartCoroutine(StartGeneration());
+    }
+    IEnumerator StartGeneration()
+    {
         if (terrain == null) terrain = Terrain.activeTerrain;
 
         MapDisplay display = FindAnyObjectByType<MapDisplay>();
         texture = display.texture2D;
 
         GameObject[] terrainHeights = GameObject.FindGameObjectsWithTag("TerrainHeight");
+        while (terrainHeights.Length < 100)
+        {
+            terrainHeights = GameObject.FindGameObjectsWithTag("TerrainHeight");
+            yield return null;
+        }
         int i = 0;
+        Debug.Log("TerrainHeights: " + terrainHeights.Length);
         pointTransforms = new Transform[terrainHeights.Length];
         foreach (GameObject point in terrainHeights)
         {
@@ -55,11 +54,11 @@ public class TerrainGenerater : MonoBehaviour
         }
 
         ApplyHeightMap();
+        gameObject.GetComponent<TerrainColorByHeight>().HeightColoring();
         SetTerrainHeights();
         SmoothTerrain();
         GenerateTrees();
     }
-
     void SetTerrainHeights()
     {
         TerrainData terrainData = terrain.terrainData;
@@ -71,6 +70,7 @@ public class TerrainGenerater : MonoBehaviour
         Vector3 terrainPosition = terrain.transform.position;
 
         Vector3[] linePositions = new Vector3[pointTransforms.Length];
+        Debug.Log("Point transforms: " + pointTransforms.Length);
         line.positionCount = pointTransforms.Length;
         int index = 0;
         foreach (Transform point in pointTransforms)
@@ -107,21 +107,18 @@ public class TerrainGenerater : MonoBehaviour
 
                     if (x * x + z * z <= smallRadius * smallRadius)
                     {
-
                         for (int i = 0; i < terrainData.alphamapLayers; i++)
                         {
-                            splatmap[terrainZ, terrainX, i] = (i == 4) ? blendFactor : (1f - blendFactor);
+                            splatmap[terrainZ, terrainX, i] = (i == 3) ? blendFactor : (1f - blendFactor);
                         }
                     }
                 }
             }
         }
-        terrainData.SetAlphamaps(0, 0, splatmap);
         terrainData.SetHeights(0, 0, heights);
+        terrainData.SetAlphamaps(0, 0, splatmap);
         linePositions[linePositions.Length - 1] = linePositions[linePositions.Length - 2];
         line.SetPositions(linePositions);
-
-
     }
     public void GenerateTrees()
     {
@@ -173,12 +170,10 @@ public class TerrainGenerater : MonoBehaviour
     {
         TerrainData terrainData = terrain.terrainData;
         float[,] heightMap = terrainData.GetHeights(0, 0, terrainData.heightmapResolution, terrainData.heightmapResolution);
-
         for (int iteration = 0; iteration < smoothingIterations; iteration++)
         {
             heightMap = ApplySmoothing(heightMap, terrainData.heightmapResolution);
         }
-
         terrainData.SetHeights(0, 0, heightMap);
     }
 
@@ -227,11 +222,11 @@ public class TerrainGenerater : MonoBehaviour
                 heights[y, x] = pixelHeight * heightMultiplier / terrainData.size.y;
             }
         }
-
         terrainData.SetHeights(0, 0, heights);
         Debug.Log("Heightmap applied to terrain!");
     }
 }
+
 #if UNITY_EDITOR
 [CustomEditor(typeof(TerrainGenerater))]
 public class MyScriptEditor3 : Editor

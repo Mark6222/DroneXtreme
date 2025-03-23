@@ -9,6 +9,7 @@ TagManager:
   - NetworkManager
   - Point
   - TerrainHeight
+  - RingSpawnPoint
   layers:
   - Default
   - TransparentFX

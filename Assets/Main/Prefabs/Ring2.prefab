@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4748294219968734925
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8302143102385806385}
+  m_Layer: 0
+  m_Name: spawn
+  m_TagString: RingSpawnPoint
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8302143102385806385
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4748294219968734925}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.153, z: -0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5536175996255745380}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &5431002234343346831
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -22,15 +53,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7bd08c06629fba24c8e9058e857de731, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 178.7
+      value: 619.14307
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7bd08c06629fba24c8e9058e857de731, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 219
+      value: 147.5
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7bd08c06629fba24c8e9058e857de731, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 415
+      value: 118.1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7bd08c06629fba24c8e9058e857de731, type: 3}
       propertyPath: m_LocalRotation.w
@@ -74,6 +105,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 7bd08c06629fba24c8e9058e857de731, type: 3}
       insertIndex: -1
       addedObject: {fileID: 9161144616695703839}
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 7bd08c06629fba24c8e9058e857de731, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8302143102385806385}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 7bd08c06629fba24c8e9058e857de731, type: 3}
       insertIndex: -1
@@ -103,6 +137,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   checkpointParticles: {fileID: 4053879776027327208}
+  isReached: 0
+  isNextRing: 0
 --- !u!65 &-584330133654954503
 BoxCollider:
   m_ObjectHideFlags: 0

@@ -1,31 +1,23 @@
+using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Point : MonoBehaviour
 {
     public GameObject prefab;
+    ProcedurelGeneration pg;
+
     void Start()
     {
+        pg = FindFirstObjectByType<ProcedurelGeneration>();
     }
-
-    private float timer = 0f;
-    private bool hasTriggered = false;
 
     void Update()
     {
-        if (!hasTriggered)
+        if (pg.complete)
         {
-            timer += Time.deltaTime;
-
-            if (timer >= 1f)
-            {
-                DoSomething();
-                hasTriggered = true;
-            }
+            Instantiate(prefab, gameObject.transform.position, gameObject.transform.rotation);
+            enabled = false;
         }
-    }
-
-    void DoSomething()
-    {
-        Instantiate(prefab, gameObject.transform.position, gameObject.transform.rotation);
     }
 }

@@ -5,48 +5,49 @@ public class Spawn : MonoBehaviour
 {
     GameObject[] Drones;
     GameObject[] points;
+    GameObject[] RingSpawns;
     public ParticleSystem partival;
 
     public GameObject Prefab;
 
-    void Start()
+    public void SpawnPlayer()
     {
-        StartCoroutine(RunForTenSeconds());
-    }
-    IEnumerator RunForTenSeconds()
-    {
-        float duration = 5;
-        float elapsedTime = 0f;
-
-        while (elapsedTime < duration)
+        Debug.Log("SpawnPlayer called");
+        points = gameObject.GetComponent<PointsManager>().points;
+        RingSpawns = GameObject.FindGameObjectsWithTag("RingSpawnPoint");
+        if (RingSpawns.Length < 2)
         {
-            elapsedTime += Time.deltaTime;
-            yield return null;
+            Debug.LogError("Not enough RingSpawnPoints found");
+            return;
         }
-        points = GameObject.FindGameObjectsWithTag("Point");
-
-        Transform spawnPoint = points[0].transform;
+        Debug.Log("RingSpawns found: " + RingSpawns.Length);
+        Transform spawnPoint = points[0].transform; 
         Vector3 spawnPosition = spawnPoint.position - spawnPoint.forward * 2f;
 
         if (PlayerPrefs.GetInt("IsMultiplayer") == 1)
         {
+            Debug.Log("Multiplayer mode");
             Drones = GameObject.FindGameObjectsWithTag("Drone");
             foreach (GameObject drone in Drones)
             {
-                drone.transform.position = spawnPosition;
-                drone.transform.rotation = spawnPoint.rotation;
-                drone.transform.LookAt(spawnPoint);
+                Debug.Log("Setting drone position and rotation");
+                drone.transform.position = RingSpawns[1].transform.position;
+                drone.transform.LookAt(points[1].transform);
+                drone.transform.rotation = Quaternion.Euler(drone.transform.rotation.eulerAngles.x, drone.transform.rotation.eulerAngles.y + 90, drone.transform.rotation.eulerAngles.z + 50);
             }
         }
         else
         {
-            Instantiate(Prefab, spawnPosition, Quaternion.identity);
+            Debug.Log("Single player mode");
+            GameObject drone = Instantiate(Prefab, RingSpawns[1].transform.position += Vector3.up, Quaternion.identity);
+            drone.transform.position = RingSpawns[1].transform.position;
+            drone.transform.LookAt(points[1].transform);
+            drone.transform.rotation = Quaternion.Euler(drone.transform.rotation.eulerAngles.x, drone.transform.rotation.eulerAngles.y + 90, drone.transform.rotation.eulerAngles.z + 50);
         }
     }
-
     // Update is called once per frame
     void Update()
     {
-        partival.Play();
+        // partival.Play();
     }
 }
