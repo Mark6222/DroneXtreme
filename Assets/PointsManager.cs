@@ -14,21 +14,19 @@ public class PointsManager : MonoBehaviour
     {
         if (managePoints)
         {
-            Debug.Log("managePoints is true");
             if (!hasTriggered)
             {
                 timer += Time.deltaTime;
-                Debug.Log("Timer: " + timer);
-
                 if (timer >= 1f)
                 {
                     points = GameObject.FindGameObjectsWithTag("Point");
-                    Debug.Log("Points found: " + points.Length);
                     gameObject.GetComponent<Spawn>().SpawnPlayer();
-                    if (points.Length > 0) // Ensure points array is not empty
+                    if (points.Length > 0)
                     {
                         GameObject[] ringSpawnPoints = GameObject.FindGameObjectsWithTag("RingSpawnPoint");
                         RingSpawns = new Transform[ringSpawnPoints.Length];
+                        points[1].GetComponent<Ring>().SetStartPanel();
+                        points[points.Length - 1].GetComponent<Ring>().SetEndPanel();
                         for (int i = 0; i < ringSpawnPoints.Length; i++)
                         {
                             RingSpawns[i] = ringSpawnPoints[i].transform;
@@ -40,16 +38,10 @@ public class PointsManager : MonoBehaviour
                         points[currentPoint].SetActive(true);
                         hasTriggered = true;
                     }
-                    else
-                    {
-                        Debug.LogError("No points found with tag 'Point'");
-                    }
                 }
             }
             if (currentPoint < points.Length)
             {
-                Debug.Log("Current point: " + currentPoint);
-                // or firstTime == true
                 if (points[currentPoint].GetComponent<Ring>().isReached || firstTime)
                 {
                     firstTime = false;
@@ -59,7 +51,7 @@ public class PointsManager : MonoBehaviour
                     {
                         points[currentPoint].SetActive(true);
                         points[currentPoint].GetComponent<Ring>().SetCurrntRing();
-                        if (currentPoint + 1 < points.Length) // Ensure the next point exists
+                        if (currentPoint + 1 < points.Length)
                         {
                             points[currentPoint + 1].SetActive(true);
                             points[currentPoint + 1].GetComponent<Ring>().SetNextRing();

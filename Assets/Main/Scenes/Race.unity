@@ -217,6 +217,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 525c38f413a0d7f4083416950715c466, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  partival: {fileID: 0}
   Prefab: {fileID: 0}
 --- !u!4 &773274240
 Transform:

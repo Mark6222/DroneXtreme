@@ -20,7 +20,7 @@ public class PlayerMovement : NetworkBehaviour
     public bool Offline = true;
     private AudioSource audioSource;
     public float Drag = 2f;
-
+    public bool Fixed = true;
 
     [ReadOnly] public Vector2 rightStickInput;
     [ReadOnly] public Vector2 leftStickInput;
@@ -57,18 +57,24 @@ public class PlayerMovement : NetworkBehaviour
     }
     void Update()
     {
-        isOwner = IsOwner;
-        isClient = IsClient;
-        // Or Oflfine 
-        if (IsOwner || Offline) ControlDrone();
+        if (!Fixed)
+        {
+            isOwner = IsOwner;
+            isClient = IsClient;
+            // Or Oflfine 
+            if (IsOwner || Offline) ControlDrone();
+        }
     }
-    // void FixedUpdate()
-    // {
-    //     isOwner = IsOwner;
-    //     isClient = IsClient;
-    //     // Or Oflfine 
-    //     if (IsOwner || Offline) ControlDrone();
-    // }
+    void FixedUpdate()
+    {
+        if (Fixed)
+        {
+            isOwner = IsOwner;
+            isClient = IsClient;
+            // Or Oflfine 
+            if (IsOwner || Offline) ControlDrone();
+        }
+    }
     void ControlDrone()
     {
         Vector3 rotationVelocity = new Vector3(rightStickInput.x * rotationSpeed * rightStickInput.magnitude, leftStickInput.x * rotationSpeed * leftStickInput.magnitude, rightStickInput.y * rotationSpeed * rightStickInput.magnitude);

@@ -1,4 +1,7 @@
+using System;
 using NUnit.Framework;
+using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
@@ -8,6 +11,11 @@ public class Ring : MonoBehaviour
     private AudioSource audioSource;
     public bool isReached = false;
     public bool isNextRing = false;
+    public GameObject startPanel;
+    public GameObject endPanel;
+    bool lastRing = false;
+    private bool raceEnded = false;
+
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
@@ -15,11 +23,24 @@ public class Ring : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Drone") && !isNextRing)
+        if (other.CompareTag("Drone") && !isNextRing && !isReached)
         {
+            isReached = true;
+            if (lastRing && !raceEnded)
+            {
+                raceEnded = true;
+                foreach (GameObject g in GameObject.FindGameObjectsWithTag("Drone"))
+                {
+                    NetworkManager networkManager = GameObject.FindGameObjectWithTag("NetworkManager")?.GetComponent<NetworkManager>();
+                    bool offline = networkManager == null || !networkManager.IsHost || !networkManager.IsConnectedClient;
+                    if (g.GetComponent<RaceManager>().IsOwner || offline)
+                    {
+                        g.GetComponent<RaceManager>().EndRace();
+                    }
+                }
+            }
             checkpointParticles.Play();
             audioSource.Play();
-            isReached = true;
             Destroy(gameObject, 0.5f);
         }
     }
@@ -34,5 +55,14 @@ public class Ring : MonoBehaviour
     {
         isNextRing = false;
         gameObject.GetComponent<Renderer>().material.color = Color.green;
+    }
+    public void SetStartPanel()
+    {
+        startPanel.SetActive(true);
+    }
+    public void SetEndPanel()
+    {
+        lastRing = true;
+        endPanel.SetActive(true);
     }
 }

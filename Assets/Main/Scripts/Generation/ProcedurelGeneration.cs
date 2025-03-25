@@ -4,28 +4,36 @@ using UnityEngine.Splines;
 
 public class ProcedurelGeneration : MonoBehaviour
 {
-    [SerializeField] private GameObject splineObject;
     [SerializeField] private Transform Spawn;
+    [SerializeField] private GameObject Spline;
+
+    [SerializeField] private GameObject Spline2;
+    [SerializeField] private GameObject Spline3;
+
     SplineContainer splineContainer;
-    [SerializeField] private SplineContainer splineContainerTerrain;
+    SplineContainer splineContainerTerrain;
+    SplineContainer splineContainerTrolly;
+
     public int RaceSize = 100;
     public int amplitude = 20;
     public int randomNum = 30;
     float prevRandomX, prevRandomY, prevRandomZ;
-    public bool complete = false;
     GameObject[] points;
     public Vector3[] pointTransforms;
+
     void Start()
     {
+
+        Debug.Log("ProcedurelGeneration Start");
         SpawnPoints();
-        splineContainer = splineObject.GetComponent<SplineContainer>();
+        splineContainer = Spline.GetComponent<SplineContainer>();
         prevRandomX = UnityEngine.Random.Range(-randomNum, randomNum);
         prevRandomY = UnityEngine.Random.Range(-randomNum, randomNum);
         prevRandomZ = 0;
     }
     public void SpawnPoints()
     {
-        complete = true;
+        Debug.Log("SpawnPoints called");
         pointTransforms = new Vector3[RaceSize];
         points = new GameObject[RaceSize];
         float x, y, z;
@@ -33,7 +41,9 @@ public class ProcedurelGeneration : MonoBehaviour
         y = Spawn.position.y;
         z = Spawn.position.z;
         {
-            splineContainer = splineObject.GetComponent<SplineContainer>();
+            splineContainer = Spline.GetComponent<SplineContainer>();
+            splineContainerTerrain = Spline2.GetComponent<SplineContainer>();
+            splineContainerTrolly = Spline3.GetComponent<SplineContainer>();
             splineContainer.Spline.Clear();
             splineContainerTerrain.Spline.Clear();
             for (int i = 0; i < RaceSize; i++)
@@ -58,15 +68,17 @@ public class ProcedurelGeneration : MonoBehaviour
                 pointTransforms[i] = basePosition + offset;
                 splineContainer.Spline.Add(new BezierKnot(pointTransforms[i]), TangentMode.AutoSmooth);
                 splineContainerTerrain.Spline.Add(new BezierKnot(pointTransforms[i]), TangentMode.AutoSmooth);
+                splineContainerTrolly.Spline.Add(new BezierKnot(pointTransforms[i]), TangentMode.AutoSmooth);
                 x = x + circleX;
                 z = z + circleZ;
+                Debug.Log($"Point {i}: {pointTransforms[i]}");
             }
-            // foreach(BezierKnot knot in splineContainer.Splin){
-
-            // }
             splineContainer.Spline.Closed = true;
+            splineContainerTerrain.Spline.Closed = true;
+            splineContainerTrolly.Spline.Closed = true;
         }
-        complete = true;
+        Spline.GetComponent<SplineInstantiate>().enabled = true;
+        Spline2.GetComponent<SplineInstantiate>().enabled = true;
         gameObject.GetComponent<PointsManager>().managePoints = true;
         gameObject.GetComponent<TerrainGenerater>().Generate();
     }

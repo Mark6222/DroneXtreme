@@ -8,19 +8,27 @@ public class PlayerCamera : NetworkBehaviour
 {
     public bool Offline = true;
     public GameObject camera;
+    private bool cameraActivated = false;
 
     void Update()
     {
-        Offline = !GameObject.FindGameObjectWithTag("NetworkManager").GetComponent<NetworkManager>().IsHost || !GameObject.FindGameObjectWithTag("NetworkManager").GetComponent<NetworkManager>().IsConnectedClient;
-        if (SceneManager.GetActiveScene().name != "SplashScreen")
+        if (!cameraActivated)
         {
-            if (Offline) camera.SetActive(true);
-            else if (IsOwner) camera.SetActive(true);
-            else camera.SetActive(false);
-        }
-        else
-        {
-            camera.SetActive(false);
+            NetworkManager networkManager = GameObject.FindGameObjectWithTag("NetworkManager")?.GetComponent<NetworkManager>();
+            Offline = networkManager == null || !networkManager.IsHost || !networkManager.IsConnectedClient;
+            
+            if (SceneManager.GetActiveScene().name != "SplashScreen")
+            {
+                if (Offline) camera.SetActive(true);
+                else if (IsOwner) camera.SetActive(true);
+                else camera.SetActive(false);
+            }
+            else
+            {
+                camera.SetActive(false);
+            }
+
+            cameraActivated = true;
         }
     }
 }
