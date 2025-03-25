@@ -280,7 +280,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 3873599598942382968}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 7587521955197015176}
+        m_TargetAssemblyTypeName: GameSceneManager, Assembly-CSharp
+        m_MethodName: SwitchScene
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: SplashScreen
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &1072284908758748323
 GameObject:
   m_ObjectHideFlags: 0
@@ -1825,6 +1837,7 @@ GameObject:
   - component: {fileID: 5798422632221831257}
   - component: {fileID: 1621887827530870635}
   - component: {fileID: 4647137128187259638}
+  - component: {fileID: 7587521955197015176}
   m_Layer: 5
   m_Name: EndScreen
   m_TagString: Untagged
@@ -1892,6 +1905,18 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &7587521955197015176
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3837079789380527082}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c42cd35eae72ec4792ce3ecf7f256a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4615975909470361832
 GameObject:
   m_ObjectHideFlags: 0
@@ -2339,7 +2364,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1306285291573644301}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 7587521955197015176}
+        m_TargetAssemblyTypeName: GameSceneManager, Assembly-CSharp
+        m_MethodName: SwitchScene
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: ProceduralGeneration
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &5389772760552328012
 GameObject:
   m_ObjectHideFlags: 0
@@ -3692,7 +3729,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 3330818176
+  GlobalObjectIdHash: 921951961
   InScenePlacedSourceGlobalObjectIdHash: 3626803980
   DeferredDespawnTick: 0
   Ownership: 1
@@ -4064,8 +4101,7 @@ MonoBehaviour:
   EndScreen: {fileID: 3837079789380527082}
   PlayerItem: {fileID: 5844817909725887751, guid: d7debb6c1c1deb549bc6f3a96e0e954b, type: 3}
   Content: {fileID: 4615975909470361832}
-  Name: {fileID: 0}
-  EndRaceTime: {fileID: 0}
+  RacingUI: {fileID: 5144396212911864820}
 --- !u!1 &6887965207889788521 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -1415888828485358189, guid: e6410546462024c4f87fb31cd9433fb9, type: 3}

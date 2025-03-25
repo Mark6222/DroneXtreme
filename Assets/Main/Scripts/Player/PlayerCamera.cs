@@ -8,15 +8,15 @@ public class PlayerCamera : NetworkBehaviour
 {
     public bool Offline = true;
     public GameObject camera;
-    private bool cameraActivated = false;
+    public bool cameraActivated = false;
 
     void Update()
     {
-        if (!cameraActivated)
+        if (cameraActivated)
         {
-            NetworkManager networkManager = GameObject.FindGameObjectWithTag("NetworkManager")?.GetComponent<NetworkManager>();
-            Offline = networkManager == null || !networkManager.IsHost || !networkManager.IsConnectedClient;
-            
+
+            Offline = !NetworkManager.Singleton.IsServer;
+
             if (SceneManager.GetActiveScene().name != "SplashScreen")
             {
                 if (Offline) camera.SetActive(true);
@@ -27,8 +27,9 @@ public class PlayerCamera : NetworkBehaviour
             {
                 camera.SetActive(false);
             }
-
-            cameraActivated = true;
+        }else
+        {
+            camera.SetActive(false);
         }
     }
 }

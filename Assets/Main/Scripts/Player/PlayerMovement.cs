@@ -27,7 +27,6 @@ public class PlayerMovement : NetworkBehaviour
     void Start()
     {
         // OR onwer
-        Offline = !IsClient && !IsOwner;
         rig = GetComponent<Rigidbody>();
         rig.useGravity = false;
         // Physics.gravity = new Vector3(0, -100f, 0);
@@ -77,6 +76,7 @@ public class PlayerMovement : NetworkBehaviour
     }
     void ControlDrone()
     {
+        Offline = !NetworkManager.Singleton.IsServer;
         Vector3 rotationVelocity = new Vector3(rightStickInput.x * rotationSpeed * rightStickInput.magnitude, leftStickInput.x * rotationSpeed * leftStickInput.magnitude, rightStickInput.y * rotationSpeed * rightStickInput.magnitude);
         rig.angularVelocity = transform.TransformDirection(rotationVelocity);
         if (leftStickInput.y > 0)

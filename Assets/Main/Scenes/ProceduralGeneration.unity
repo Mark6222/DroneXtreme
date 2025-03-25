@@ -727,6 +727,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 525c38f413a0d7f4083416950715c466, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   partival: {fileID: 0}
   Prefab: {fileID: 4543673053294866091, guid: 945ff863d1f1bea469dfc2e31f6db04e, type: 3}
 --- !u!114 &423842957
@@ -2927,11 +2928,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 413168577828950227, guid: efdd370493da9c74db2f5fd033099caf, type: 3}
       propertyPath: m_Splines.Array.data[0].m_Knots.Array.data[7].Rotation.value.x
-      value: 0.0000000061269354
+      value: 0.000000006116123
       objectReference: {fileID: 0}
     - target: {fileID: 413168577828950227, guid: efdd370493da9c74db2f5fd033099caf, type: 3}
       propertyPath: m_Splines.Array.data[0].m_Knots.Array.data[7].Rotation.value.z
-      value: -0.00000019079356
+      value: -0.0000001908138
       objectReference: {fileID: 0}
     - target: {fileID: 413168577828950227, guid: efdd370493da9c74db2f5fd033099caf, type: 3}
       propertyPath: m_Splines.Array.data[0].m_Knots.Array.data[30].Rotation.value.z
@@ -2939,11 +2940,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 413168577828950227, guid: efdd370493da9c74db2f5fd033099caf, type: 3}
       propertyPath: m_Splines.Array.data[0].m_Knots.Array.data[38].Rotation.value.x
-      value: -0.00000007126396
+      value: -0.00000007126115
       objectReference: {fileID: 0}
     - target: {fileID: 413168577828950227, guid: efdd370493da9c74db2f5fd033099caf, type: 3}
       propertyPath: m_Splines.Array.data[0].m_Knots.Array.data[38].Rotation.value.z
-      value: -0.000000063339165
+      value: -0.000000063342334
       objectReference: {fileID: 0}
     - target: {fileID: 413168577828950227, guid: efdd370493da9c74db2f5fd033099caf, type: 3}
       propertyPath: m_Splines.Array.data[0].m_Knots.Array.data[48].Rotation.value.x
