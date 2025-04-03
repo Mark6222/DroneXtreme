@@ -9,7 +9,7 @@ public class PointsManager : MonoBehaviour
     private bool hasTriggered = false;
     bool firstTime = true;
     public bool managePoints = false;
-
+    public bool spawnPlayer = false;
     void Update()
     {
         if (managePoints)
@@ -20,7 +20,7 @@ public class PointsManager : MonoBehaviour
                 if (timer >= 1f)
                 {
                     points = GameObject.FindGameObjectsWithTag("Point");
-                    gameObject.GetComponent<Spawn>().SpawnPlayer();
+                    spawnPlayer = true;
                     if (points.Length > 0)
                     {
                         GameObject[] ringSpawnPoints = GameObject.FindGameObjectsWithTag("RingSpawnPoint");

@@ -7,6 +7,7 @@ public class GameSceneManager : MonoBehaviour
     {
         if (NetworkManager.Singleton.IsServer)
         {
+            Debug.Log("Switching scene on server: " + sceneName);
             NetworkManager.Singleton.SceneManager.LoadScene(sceneName, UnityEngine.SceneManagement.LoadSceneMode.Single);
         }
         else

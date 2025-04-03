@@ -29,15 +29,7 @@ public class Ring : MonoBehaviour
             if (lastRing && !raceEnded)
             {
                 raceEnded = true;
-                foreach (GameObject g in GameObject.FindGameObjectsWithTag("Drone"))
-                {
-                    NetworkManager networkManager = GameObject.FindGameObjectWithTag("NetworkManager")?.GetComponent<NetworkManager>();
-                    bool offline = networkManager == null || !networkManager.IsHost || !networkManager.IsConnectedClient;
-                    if (g.GetComponent<RaceManager>().IsOwner || offline)
-                    {
-                        g.GetComponent<RaceManager>().EndRace();
-                    }
-                }
+                other.gameObject.GetComponent<RaceManager>().EndRace();
             }
             checkpointParticles.Play();
             audioSource.Play();

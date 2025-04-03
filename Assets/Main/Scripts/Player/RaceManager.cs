@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 using System;
 using NUnit.Framework;
 
-public class RaceManager : NetworkBehaviour
+public class RaceManager : MonoBehaviour
 {
     public TextMeshProUGUI RaceTime, Countdown;
     private float raceStartTime;
@@ -16,44 +16,18 @@ public class RaceManager : NetworkBehaviour
     public GameObject EndScreen;
     public GameObject PlayerItem;
     public GameObject Content;
-    public GameObject RacingUI;
-
-    bool offline = true;
-
-
+    public Dictionary<GameObject, GameObject> EndSceenPlayers = new Dictionary<GameObject, GameObject>();
+    GameObject[] Players;
     void Start()
     {
-        gameObject.GetComponent<PlayerCamera>().cameraActivated = true;
-        RaceTime.enabled = false;
-        Countdown.enabled = false;
+        EndScreen.SetActive(false);
+        RaceTime.text = "";
+        Countdown.text = "";
         raceStarted = false;
-        SceneManager.sceneLoaded += OnSceneLoaded;
-        offline = !NetworkManager.Singleton.IsServer;
-        if (offline)
-        {
-            RacingUI.SetActive(true);
-            RaceTime.enabled = true;
-            Countdown.enabled = true;
-            StartCoroutine(StartCountdown());
-        }
-        else if (SceneManager.GetActiveScene().name == "ProceduralGeneration" && IsOwner)
-        {
-            RacingUI.SetActive(true);
-            RaceTime.enabled = true;
-            Countdown.enabled = true;
-            StartCoroutine(StartCountdown());
-        }
     }
-
-    private void OnSceneLoaded(UnityEngine.SceneManagement.Scene arg0, LoadSceneMode arg1)
+    public void ShowUI()
     {
-        Debug.Log("Scene Loaded: " + arg0.name + " isServer: " + NetworkManager.Singleton.IsServer);
-        if (arg0.name == "ProceduralGeneration" && IsOwner)
-        {
-            RaceTime.enabled = true;
-            Countdown.enabled = true;
-            StartCoroutine(StartCountdown());
-        }
+        StartCoroutine(StartCountdown());
     }
     IEnumerator StartCountdown()
     {
@@ -76,28 +50,45 @@ public class RaceManager : NetworkBehaviour
 
     void StartRace()
     {
+        Players = GameObject.FindGameObjectsWithTag("Drone");
+
+        EndSceenPlayers.Clear();
+        raceStartTime = 0f;
         raceStartTime = Time.time;
         raceStarted = true;
     }
 
     public void EndRace()
     {
+        gameObject.GetComponent<PlayerManeger>().playerCamera.SetActive(false);
+        GameObject trollyCam = GameObject.FindGameObjectWithTag("TrollyCam");
+        if (trollyCam != null)
+        {
+            trollyCam.SetActive(false);
+        }
         RaceTime.enabled = false;
         Countdown.enabled = false;
         raceStarted = false;
         EndScreen.SetActive(true);
-        GameObject[] Players = GameObject.FindGameObjectsWithTag("Drone");
+        gameObject.GetComponent<PlayerManeger>().RaceTimes.Add(Time.time - raceStartTime);
+        Players = GameObject.FindGameObjectsWithTag("Drone");
         foreach (GameObject player in Players)
         {
-            player.GetComponent<PlayerCamera>().cameraActivated = false;
             GameObject item = Instantiate(PlayerItem, Content.transform);
-            item.transform.Find("Name").GetComponent<TextMeshProUGUI>().text = player.name;
-            item.transform.Find("Time").GetComponent<TextMeshProUGUI>().text = Time.time - player.GetComponent<RaceManager>().raceStartTime + "s";
+            EndSceenPlayers.Add(item, player);
         }
+    }
+
+    public void ResetEndScreen()
+    {
+        foreach (KeyValuePair<GameObject, GameObject> kvp in EndSceenPlayers)
+        {
+            Destroy(kvp.Key);
+        }
+        EndScreen.SetActive(false);
     }
     void Update()
     {
-        offline = !NetworkManager.Singleton.IsServer;
         if (raceStarted)
         {
             float raceTime = Time.time - raceStartTime;
@@ -107,6 +98,29 @@ public class RaceManager : NetworkBehaviour
         {
             RaceTime.text = "";
             Countdown.text = "";
+            int index = 0;
+            foreach (KeyValuePair<GameObject, GameObject> kvp in EndSceenPlayers)
+            {
+                GameObject player = kvp.Value;
+                GameObject item = kvp.Key;
+                if (player != null && item != null)
+                {
+                    TextMeshProUGUI textComponent = item.GetComponent<TextMeshProUGUI>();
+                    if (textComponent != null)
+                    {
+                        RaceManager playerRaceManager = player.GetComponent<RaceManager>();
+                        if (playerRaceManager != null)
+                        {
+                            textComponent.text = (Time.time - playerRaceManager.raceStartTime).ToString("F2") + "s";
+                        }
+                        else
+                        {
+                            textComponent.text = player.name;
+                        }
+                    }
+                    index++;
+                }
+            }
         }
     }
 }

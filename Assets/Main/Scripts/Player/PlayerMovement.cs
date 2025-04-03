@@ -76,7 +76,7 @@ public class PlayerMovement : NetworkBehaviour
     }
     void ControlDrone()
     {
-        Offline = !NetworkManager.Singleton.IsServer;
+        if(NetworkManager != null) Offline = !NetworkManager.Singleton.IsServer;
         Vector3 rotationVelocity = new Vector3(rightStickInput.x * rotationSpeed * rightStickInput.magnitude, leftStickInput.x * rotationSpeed * leftStickInput.magnitude, rightStickInput.y * rotationSpeed * rightStickInput.magnitude);
         rig.angularVelocity = transform.TransformDirection(rotationVelocity);
         if (leftStickInput.y > 0)

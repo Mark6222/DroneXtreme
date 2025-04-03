@@ -10,6 +10,8 @@ TagManager:
   - Point
   - TerrainHeight
   - RingSpawnPoint
+  - TrollyCam
+  - PlayerUiItem
   layers:
   - Default
   - TransparentFX
