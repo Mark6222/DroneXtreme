@@ -12,6 +12,7 @@ TagManager:
   - RingSpawnPoint
   - TrollyCam
   - PlayerUiItem
+  - SpawnPoint
   layers:
   - Default
   - TransparentFX

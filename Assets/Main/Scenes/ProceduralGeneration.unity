@@ -563,9 +563,9 @@ GameObject:
   - component: {fileID: 423842951}
   - component: {fileID: 423842954}
   - component: {fileID: 423842955}
+  - component: {fileID: 423842958}
   - component: {fileID: 423842956}
   - component: {fileID: 423842957}
-  - component: {fileID: 423842958}
   m_Layer: 0
   m_Name: ProceduralGeneration
   m_TagString: Untagged
@@ -3141,6 +3141,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
   RaceTimes: []
+  StuntScores: []
   OnlineDrone: 0
   rotationYOffset: 90
   rotationZOffset: 50
@@ -3148,6 +3149,7 @@ MonoBehaviour:
   RacingUI: {fileID: 0}
   playerCamera: {fileID: 0}
   EndScreen: {fileID: 0}
+  EndScreenContent: {fileID: 0}
   isMultiplayer: 0
 --- !u!1001 &4294060080912283252
 PrefabInstance:
@@ -3159,11 +3161,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 413168577828950227, guid: efdd370493da9c74db2f5fd033099caf, type: 3}
       propertyPath: m_Splines.Array.data[0].m_Knots.Array.data[7].Rotation.value.x
-      value: 0.000000006103027
+      value: 0.000000006099728
       objectReference: {fileID: 0}
     - target: {fileID: 413168577828950227, guid: efdd370493da9c74db2f5fd033099caf, type: 3}
       propertyPath: m_Splines.Array.data[0].m_Knots.Array.data[7].Rotation.value.z
-      value: -0.0000001908383
+      value: -0.00000019084447
       objectReference: {fileID: 0}
     - target: {fileID: 413168577828950227, guid: efdd370493da9c74db2f5fd033099caf, type: 3}
       propertyPath: m_Splines.Array.data[0].m_Knots.Array.data[30].Rotation.value.z
@@ -3171,11 +3173,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 413168577828950227, guid: efdd370493da9c74db2f5fd033099caf, type: 3}
       propertyPath: m_Splines.Array.data[0].m_Knots.Array.data[38].Rotation.value.x
-      value: -0.00000007125936
+      value: -0.0000000712593
       objectReference: {fileID: 0}
     - target: {fileID: 413168577828950227, guid: efdd370493da9c74db2f5fd033099caf, type: 3}
       propertyPath: m_Splines.Array.data[0].m_Knots.Array.data[38].Rotation.value.z
-      value: -0.000000063344345
+      value: -0.000000063344416
       objectReference: {fileID: 0}
     - target: {fileID: 413168577828950227, guid: efdd370493da9c74db2f5fd033099caf, type: 3}
       propertyPath: m_Splines.Array.data[0].m_Knots.Array.data[48].Rotation.value.x
@@ -3284,6 +3286,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3002932106380741108, guid: 296b4498cd5edf5439d84a0b284969e0, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3446262052558860369, guid: 296b4498cd5edf5439d84a0b284969e0, type: 3}
+      propertyPath: OnlineDrone
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7180059872502046595, guid: 296b4498cd5edf5439d84a0b284969e0, type: 3}

@@ -16,7 +16,7 @@ public class TrickSystem : NetworkBehaviour
     [SerializeField] bool TornadoFlip, DiveFlipRoll, DriftTurnDive;
     bool WallRide, GroundKiss, ThreadTheNeedle;
     private Rigidbody rb;
-    private PlayerScore playerScore;
+    public PlayerScore playerScore;
     [SerializeField] private int scoreAdded = 10;
     [SerializeField] private int Multiplyer = 1;
     [SerializeField] private LayerMask detectionLayerMask;
@@ -44,19 +44,16 @@ public class TrickSystem : NetworkBehaviour
         playerScore = new PlayerScore();
         Offline = !NetworkManager.Singleton.IsServer;
 
-        if (!Offline) SceneManager.sceneLoaded += OnSceneLoaded;
-        else init();
-        if (Offline || IsOwner) init();
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         Debug.Log("Scene Loaded: " + scene.name);
-        Offline = !NetworkManager.Singleton.IsServer;
+        Offline = !NetworkManager.Singleton.IsServer || !NetworkManager.Singleton.IsClient;
         if (scene.name == "StuntMode")
         {
             enabled = true;
-            if (Offline) init();
-            else if (IsOwner) init();
+            init();
         }
     }
     void init()
@@ -81,7 +78,7 @@ public class TrickSystem : NetworkBehaviour
         // scores = GameObject.Find("Scores");
         // scoringUI = GameObject.Find("ScoringUI");
         // actionTexts = GameObject.Find("ActionTexts");
-
+        UiAnimators.Clear();
         UiAnimators.Add("MultiplyerText", mutiplyerText.GetComponent<Animator>());
         UiAnimators.Add("ScoreToAddText", addedScoreText.GetComponent<Animator>());
         UiAnimators.Add("PlayerScoreText", playerScoreText.GetComponent<Animator>());

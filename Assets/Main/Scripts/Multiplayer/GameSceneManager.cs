@@ -5,14 +5,31 @@ public class GameSceneManager : MonoBehaviour
 {
     public void SwitchScene(string sceneName)
     {
-        if (NetworkManager.Singleton.IsServer)
+        if (sceneName == "Restart")
         {
-            Debug.Log("Switching scene on server: " + sceneName);
-            NetworkManager.Singleton.SceneManager.LoadScene(sceneName, UnityEngine.SceneManagement.LoadSceneMode.Single);
+            string scene = SceneManager.GetActiveScene().name;
+            if (NetworkManager.Singleton.IsServer)
+            {
+                Debug.Log("Switching scene on server: " + scene);
+                NetworkManager.Singleton.SceneManager.LoadScene(scene, UnityEngine.SceneManagement.LoadSceneMode.Single);
+            }
+            else
+            {
+                SceneManager.LoadScene(scene);
+            }
         }
         else
         {
-            SceneManager.LoadScene(sceneName);
+            // check if there 
+            if (NetworkManager.Singleton.IsServer)
+            {
+                Debug.Log("Switching scene on server: " + sceneName);
+                NetworkManager.Singleton.SceneManager.LoadScene(sceneName, UnityEngine.SceneManagement.LoadSceneMode.Single);
+            }
+            else
+            {
+                SceneManager.LoadScene(sceneName);
+            }
         }
     }
 }

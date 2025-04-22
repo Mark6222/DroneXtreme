@@ -10,6 +10,7 @@ using UnityEngine.SceneManagement;
 public class PlayerManeger : NetworkBehaviour
 {
     public List<float> RaceTimes = new List<float>();
+    public List<float> StuntScores = new List<float>();
     public bool OnlineDrone = true;
     [SerializeField] private float rotationYOffset = 90f;
     [SerializeField] private float rotationZOffset = 50f;
@@ -19,7 +20,12 @@ public class PlayerManeger : NetworkBehaviour
     public GameObject playerCamera;
     public GameObject EndScreen;
     public GameObject EndScreenContent;
+    public GameObject RestartButton;
+    public GameObject MainMenuButton;
+    public GameObject LeaveButton;
+
     [SerializeField] bool isMultiplayer = false;
+    bool stuntMode = false;
 
     void Awake()
     {
@@ -34,6 +40,16 @@ public class PlayerManeger : NetworkBehaviour
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         Debug.Log($"Scene loaded: {scene.name}, Mode: {mode}");
+        isMultiplayer = NetworkManager.Singleton.IsServer || NetworkManager.Singleton.IsClient;
+        if (isMultiplayer && !IsHost)
+        {
+            ResetEndScreenAndPlayer();
+        }
+        if ((NetworkManager.Singleton.IsServer || NetworkManager.Singleton.IsClient) && !OnlineDrone)
+        {
+            gameObject.SetActive(false);
+            return;
+        }
         HandleSceneSpecificSetup();
     }
 
@@ -87,17 +103,6 @@ public class PlayerManeger : NetworkBehaviour
 
     public void DeactivatePlayer()
     {
-        if (EndScreenContent != null)
-        {
-            foreach (Transform child in EndScreenContent.transform)
-            {
-                if (child.gameObject.name != "ItemHeading")
-                {
-                    Destroy(child.gameObject);
-                }
-            }
-        }
-
         isDeactivated = true;
         for (int i = 0; i < transform.childCount; i++)
         {
@@ -171,6 +176,7 @@ public class PlayerManeger : NetworkBehaviour
 
     void RaceMode()
     {
+        stuntMode = false;
         GameObject trollyCam = GameObject.FindGameObjectWithTag("TrollyCam");
         if (trollyCam != null)
         {
@@ -180,6 +186,12 @@ public class PlayerManeger : NetworkBehaviour
         if (gameObject.GetComponent<TrickSystem>() != null)
             gameObject.GetComponent<TrickSystem>().enabled = false;
 
+        if (gameObject.GetComponent<RaceManager>() != null)
+            gameObject.GetComponent<RaceManager>().enabled = true;
+
+        if (gameObject.GetComponent<StuntManager>() != null)
+            gameObject.GetComponent<StuntManager>().enabled = false;
+
         if (ScoringUI != null)
             ScoringUI.SetActive(false);
 
@@ -187,20 +199,41 @@ public class PlayerManeger : NetworkBehaviour
             RacingUI.SetActive(true);
 
         StartCoroutine(WaitAndSpawnPlayer());
+        EndScreenHost();
     }
 
     void StuntMode()
     {
+        stuntMode = true;
         ActivatePlayer(true);
 
         if (gameObject.GetComponent<RaceManager>() != null)
             gameObject.GetComponent<RaceManager>().enabled = false;
+
+        if (gameObject.GetComponent<StuntManager>() != null)
+            gameObject.GetComponent<StuntManager>().enabled = true;
+
+        if (gameObject.GetComponent<TrickSystem>() != null)
+            gameObject.GetComponent<TrickSystem>().enabled = true;
 
         if (ScoringUI != null)
             ScoringUI.SetActive(true);
 
         if (RacingUI != null)
             RacingUI.SetActive(false);
+
+        GameObject[] drones = GameObject.FindGameObjectsWithTag("Drone");
+        GameObject[] spawns = GameObject.FindGameObjectsWithTag("SpawnPoint");
+        foreach (GameObject drone in drones)
+        {
+            if (drone != null && drone != gameObject)
+            {
+                drone.transform.position = spawns[UnityEngine.Random.Range(0, spawns.Length)].transform.position + Vector3.up;
+                drone.transform.rotation = Quaternion.Euler(0, 0, 0);
+            }
+        }
+        gameObject.GetComponent<StuntManager>().ShowUI();
+        EndScreenHost();
     }
 
     private IEnumerator WaitAndSpawnPlayer()
@@ -212,13 +245,26 @@ public class PlayerManeger : NetworkBehaviour
         var points = pointsManager.points;
         var ringSpawns = GameObject.FindGameObjectsWithTag("RingSpawnPoint");
 
-        transform.position = ringSpawns[1].transform.position + Vector3.up;
+        transform.position = ringSpawns[0].transform.position + Vector3.up;
         transform.LookAt(points[1].transform);
 
         var rotation = transform.rotation.eulerAngles;
         transform.rotation = Quaternion.Euler(rotation.x, rotation.y + rotationYOffset, rotation.z + rotationZOffset);
 
         gameObject.GetComponent<RaceManager>().ShowUI();
+    }
+    public void ResetEndScreenAndPlayer()
+    {
+        gameObject.GetComponent<Rigidbody>().useGravity = false;
+        if (stuntMode)
+        {
+            gameObject.GetComponent<StuntManager>().ResetEndScreen();
+        }
+        else
+        {
+            gameObject.GetComponent<RaceManager>().ResetEndScreen();
+        }
+        RestartRace();
     }
 
     public void CompleteReset()
@@ -249,7 +295,7 @@ public class PlayerManeger : NetworkBehaviour
         Rigidbody rb = GetComponent<Rigidbody>();
         if (rb != null)
         {
-            rb.velocity = Vector3.zero;
+            rb.linearVelocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
         }
 
@@ -263,21 +309,10 @@ public class PlayerManeger : NetworkBehaviour
         RaceManager raceManager = GetComponent<RaceManager>();
         if (raceManager != null)
         {
-            raceManager.EndSceenPlayers.Clear();
+            raceManager.PlayersList.Clear();
             if (raceManager.Countdown != null) raceManager.Countdown.text = "";
             if (raceManager.RaceTime != null) raceManager.RaceTime.text = "";
             if (raceManager.EndScreen != null) raceManager.EndScreen.SetActive(false);
-        }
-
-        if (EndScreenContent != null)
-        {
-            foreach (Transform child in EndScreenContent.transform)
-            {
-                if (child.gameObject.name != "ItemHeading")
-                {
-                    Destroy(child.gameObject);
-                }
-            }
         }
 
         if (isDeactivated)
@@ -290,7 +325,7 @@ public class PlayerManeger : NetworkBehaviour
 
     public void RestartRace()
     {
-        CompleteReset();
+        // CompleteReset();
 
         if (SceneManager.GetActiveScene().name == "ProceduralGeneration")
         {
@@ -299,6 +334,41 @@ public class PlayerManeger : NetworkBehaviour
         else if (SceneManager.GetActiveScene().name == "StuntMode")
         {
             StuntMode();
+        }
+    }
+
+    public void EndScreenHost()
+    {
+        if (isMultiplayer && !IsHost)
+        {
+            RestartButton.SetActive(false);
+            MainMenuButton.SetActive(false);
+            LeaveButton.SetActive(true);
+        }
+        else if (isMultiplayer && IsHost)
+        {
+            RestartButton.SetActive(true);
+            MainMenuButton.SetActive(true);
+            LeaveButton.SetActive(false);
+        }
+        else
+        {
+            RestartButton.SetActive(true);
+            MainMenuButton.SetActive(true);
+            LeaveButton.SetActive(false);
+        }
+    }
+    public void LeaveGame()
+    {
+        if (isMultiplayer)
+        {
+            NetworkManager.Singleton.DisconnectClient(NetworkManager.Singleton.LocalClientId);
+            NetworkManager.Singleton.Shutdown();
+            SceneManager.LoadScene("MainMenu");
+        }
+        else
+        {
+            SceneManager.LoadScene("MainMenu");
         }
     }
 }

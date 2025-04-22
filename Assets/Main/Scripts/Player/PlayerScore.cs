@@ -35,4 +35,9 @@ public class PlayerScore
     {
         scoreToAdd = 0;
     }
+
+    public void ResetScore()
+    {
+        score = 0;
+    }
 }

@@ -7,26 +7,25 @@ using Unity.Netcode;
 using UnityEngine.SceneManagement;
 using System;
 using NUnit.Framework;
-
-public class RaceManager : MonoBehaviour
+public class StuntManager : MonoBehaviour
 {
     public TextMeshProUGUI RaceTime, Countdown;
-    private float raceStartTime;
-    private bool raceStarted;
+    private float timeRemaining;
+    private bool stuntStarted;
     public GameObject EndScreen;
     public GameObject PlayerItem;
     public GameObject Content;
-    public TextMeshProUGUI TimeTitle;
-
+    public TextMeshProUGUI ScoreTitle;
+    public GameObject ScoringUI;
     public List<GameObject> PlayersList = new List<GameObject>();
     GameObject[] Players;
     void Start()
     {
+        ScoringUI.SetActive(true);
         gameObject.GetComponent<PlayerMovement>().Freeze();
         EndScreen.SetActive(false);
         RaceTime.text = "";
         Countdown.text = "";
-        raceStarted = false;
     }
     public void ShowUI()
     {
@@ -34,6 +33,7 @@ public class RaceManager : MonoBehaviour
     }
     IEnumerator StartCountdown()
     {
+        ScoringUI.SetActive(true);
         int countdownTime = 3;
         while (countdownTime > 0)
         {
@@ -48,47 +48,44 @@ public class RaceManager : MonoBehaviour
         yield return new WaitForSeconds(1);
         if (this == null) yield break;
         Countdown.text = "";
-        StartRace();
+        StartStunt();
     }
 
-    void StartRace()
+    void StartStunt()
     {
         Players = GameObject.FindGameObjectsWithTag("Drone");
 
         PlayersList.Clear();
-        raceStartTime = 0f;
-        raceStartTime = Time.time;
-        raceStarted = true;
+        timeRemaining = 10f;
+        stuntStarted = true;
     }
 
-    public void EndRace()
+    public void EndStunt()
     {
+        Debug.Log("EndStunt");
+        // ScoringUI.SetActive(false);
         gameObject.GetComponent<PlayerManeger>().playerCamera.SetActive(false);
         GameObject trollyCam = GameObject.FindGameObjectWithTag("TrollyCam");
         if (trollyCam != null)
         {
             trollyCam.SetActive(false);
         }
-        RaceTime.enabled = false;
-        Countdown.enabled = false;
-        raceStarted = false;
+        stuntStarted = false;
         EndScreen.SetActive(true);
-        gameObject.GetComponent<PlayerManeger>().RaceTimes.Add(Time.time - raceStartTime);
-        Debug.Log("StuntScore: " + gameObject.GetComponent<PlayerManeger>().RaceTimes[gameObject.GetComponent<PlayerManeger>().RaceTimes.Count - 1]);
+        gameObject.GetComponent<PlayerManeger>().StuntScores.Add(gameObject.GetComponent<TrickSystem>().playerScore.GetScore());
         Players = GameObject.FindGameObjectsWithTag("Drone");
-        TimeTitle.text = "Time(s)";
+        ScoreTitle.text = "Score(s)";
         foreach (GameObject player in Players)
         {
             GameObject item = Instantiate(PlayerItem, Content.transform);
-            TextMeshProUGUI textComponent = item.transform.Find("Time").GetComponent<TextMeshProUGUI>();
             PlayersList.Add(item);
+            TextMeshProUGUI textComponent = item.transform.Find("Time").GetComponent<TextMeshProUGUI>();
             if (textComponent != null)
             {
                 List<float> playerRaceTimes = player.GetComponent<PlayerManeger>().RaceTimes;
                 if (playerRaceTimes != null)
                 {
-                    textComponent.text = (playerRaceTimes[playerRaceTimes.Count - 1]).ToString("F2") + "s";
-                    Debug.Log("Player: " + player.name + ", Time: " + playerRaceTimes[playerRaceTimes.Count - 1].ToString("F2") + "s");
+                    textComponent.text = (player.GetComponent<TrickSystem>().playerScore.GetScore()).ToString("F2") + "";
                 }
                 else
                 {
@@ -96,6 +93,7 @@ public class RaceManager : MonoBehaviour
                 }
             }
         }
+        gameObject.GetComponent<TrickSystem>().playerScore.ResetScore();
     }
 
     public void ResetEndScreen()
@@ -108,14 +106,31 @@ public class RaceManager : MonoBehaviour
     }
     void Update()
     {
-        if (raceStarted)
+        if (stuntStarted)
         {
-            float raceTime = Time.time - raceStartTime;
-            RaceTime.text = raceTime.ToString("F2") + "s";
+            timeRemaining -= Time.deltaTime;
+            RaceTime.text = timeRemaining.ToString("F2") + "s";
+            if (timeRemaining > 0.01f)
+            {
+                timeRemaining -= Time.deltaTime;
+                RaceTime.text = timeRemaining.ToString("F2") + "s";
+            }
+            else if (timeRemaining > 0f && timeRemaining < 0.01f)
+            {
+                timeRemaining -= Time.deltaTime;
+                RaceTime.text = timeRemaining.ToString("F2") + "s";
+            }
+            else
+            {
+                timeRemaining -= Time.deltaTime;
+                RaceTime.text = "";
+                EndStunt();
+            }
         }
         else
         {
             RaceTime.text = "";
         }
     }
+
 }
