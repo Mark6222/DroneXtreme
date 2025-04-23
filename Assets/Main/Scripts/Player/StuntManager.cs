@@ -21,7 +21,6 @@ public class StuntManager : MonoBehaviour
     GameObject[] Players;
     void Start()
     {
-        ScoringUI.SetActive(true);
         gameObject.GetComponent<PlayerMovement>().Freeze();
         EndScreen.SetActive(false);
         RaceTime.text = "";
@@ -33,7 +32,6 @@ public class StuntManager : MonoBehaviour
     }
     IEnumerator StartCountdown()
     {
-        ScoringUI.SetActive(true);
         int countdownTime = 3;
         while (countdownTime > 0)
         {
@@ -44,6 +42,7 @@ public class StuntManager : MonoBehaviour
         }
         if (this == null) yield break;
         Countdown.text = "Go!";
+        ScoringUI.SetActive(true);
         gameObject.GetComponent<PlayerMovement>().UnFreeze();
         yield return new WaitForSeconds(1);
         if (this == null) yield break;
@@ -56,14 +55,14 @@ public class StuntManager : MonoBehaviour
         Players = GameObject.FindGameObjectsWithTag("Drone");
 
         PlayersList.Clear();
-        timeRemaining = 10f;
+        timeRemaining = 300f;
         stuntStarted = true;
     }
 
     public void EndStunt()
     {
         Debug.Log("EndStunt");
-        // ScoringUI.SetActive(false);
+        ScoringUI.SetActive(false);
         gameObject.GetComponent<PlayerManeger>().playerCamera.SetActive(false);
         GameObject trollyCam = GameObject.FindGameObjectWithTag("TrollyCam");
         if (trollyCam != null)

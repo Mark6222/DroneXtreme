@@ -24,6 +24,9 @@ public class PlayerMovement : NetworkBehaviour
 
     [ReadOnly] public Vector2 rightStickInput;
     [ReadOnly] public Vector2 leftStickInput;
+    bool unFreeze = false;
+    public GameObject PlayerCamera;
+
     void Start()
     {
         // OR onwer
@@ -36,11 +39,13 @@ public class PlayerMovement : NetworkBehaviour
     {
         rig = GetComponent<Rigidbody>();
         rig.useGravity = false;
+        rig.isKinematic = true;
     }
     public void UnFreeze()
     {
         rig = GetComponent<Rigidbody>();
-        rig.useGravity = true;
+        unFreeze = true;
+        rig.isKinematic = false;
     }
     public override void OnNetworkSpawn()
     {
@@ -85,11 +90,23 @@ public class PlayerMovement : NetworkBehaviour
     }
     void ControlDrone()
     {
+        rotationSpeed = PlayerPrefs.GetFloat("Sensitivity");
+        Speed = PlayerPrefs.GetFloat("Speed");
+        Drag = PlayerPrefs.GetFloat("Drag");
+        PlayerCamera.transform.localRotation = Quaternion.Euler(PlayerPrefs.GetFloat("CameraTilt"), -90, 0);
+
         if (NetworkManager != null) Offline = !NetworkManager.Singleton.IsServer;
         Vector3 rotationVelocity = new Vector3(rightStickInput.x * rotationSpeed * rightStickInput.magnitude, leftStickInput.x * rotationSpeed * leftStickInput.magnitude, rightStickInput.y * rotationSpeed * rightStickInput.magnitude);
         rig.angularVelocity = transform.TransformDirection(rotationVelocity);
         if (leftStickInput.y > 0)
         {
+            if (unFreeze)
+            {
+                rig = GetComponent<Rigidbody>();
+                rig.useGravity = true;
+                unFreeze = false;
+                rig.isKinematic = false;
+            }
             movementSpeed = leftStickInput.magnitude * maxMovementSpeed * Speed;
             Vector3 newVelocity = new Vector3(0, leftStickInput.y * movementSpeed, leftStickInput.y * 0.1f);
             Vector3 worldVelocity = transform.TransformDirection(newVelocity);

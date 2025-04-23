@@ -26,6 +26,8 @@ public class PlayerManeger : NetworkBehaviour
 
     [SerializeField] bool isMultiplayer = false;
     bool stuntMode = false;
+    public GameObject SplashScreen;
+    public Animator SettingScreenAnimator;
 
     void Awake()
     {
@@ -55,6 +57,7 @@ public class PlayerManeger : NetworkBehaviour
 
     void Start()
     {
+        SplashScreen.SetActive(false);
         isMultiplayer = NetworkManager.Singleton.IsServer || NetworkManager.Singleton.IsClient;
         if (IsServer && !OnlineDrone)
         {
@@ -99,6 +102,22 @@ public class PlayerManeger : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
+        if((isMultiplayer && IsOwner) || !isMultiplayer){
+            if (Input.GetKeyDown(KeyCode.Escape) && SceneManager.GetActiveScene().name != "SplashScreen")
+            {
+                if (SplashScreen.activeSelf)
+                {
+                    SplashScreen.SetActive(false);
+                    gameObject.GetComponent<PlayerMovement>().UnFreeze();
+                }
+                else
+                {
+                    SplashScreen.SetActive(true);
+                    gameObject.GetComponent<PlayerMovement>().Freeze();
+                    SettingScreenAnimator.SetTrigger("Hide");
+                }
+            }
+        }
     }
 
     public void DeactivatePlayer()
@@ -221,16 +240,10 @@ public class PlayerManeger : NetworkBehaviour
 
         if (RacingUI != null)
             RacingUI.SetActive(false);
-
-        GameObject[] drones = GameObject.FindGameObjectsWithTag("Drone");
-        GameObject[] spawns = GameObject.FindGameObjectsWithTag("SpawnPoint");
-        foreach (GameObject drone in drones)
+        GameObject SpawnPoint = GameObject.FindGameObjectWithTag("SpawnPoint");
+        if (SpawnPoint != null)
         {
-            if (drone != null && drone != gameObject)
-            {
-                drone.transform.position = spawns[UnityEngine.Random.Range(0, spawns.Length)].transform.position + Vector3.up;
-                drone.transform.rotation = Quaternion.Euler(0, 0, 0);
-            }
+            transform.position = SpawnPoint.transform.position + Vector3.up;
         }
         gameObject.GetComponent<StuntManager>().ShowUI();
         EndScreenHost();
@@ -256,6 +269,8 @@ public class PlayerManeger : NetworkBehaviour
     public void ResetEndScreenAndPlayer()
     {
         gameObject.GetComponent<Rigidbody>().useGravity = false;
+        // gameObject.GetComponent<TrickSystem>().playerScore.ResetScore();
+
         if (stuntMode)
         {
             gameObject.GetComponent<StuntManager>().ResetEndScreen();
@@ -364,11 +379,16 @@ public class PlayerManeger : NetworkBehaviour
         {
             NetworkManager.Singleton.DisconnectClient(NetworkManager.Singleton.LocalClientId);
             NetworkManager.Singleton.Shutdown();
-            SceneManager.LoadScene("MainMenu");
+            SceneManager.LoadScene("SplashScreen");
         }
         else
         {
-            SceneManager.LoadScene("MainMenu");
+            SceneManager.LoadScene("SplashScreen");
         }
+    }
+    public void ResumeGame()
+    {
+        SplashScreen.SetActive(false);
+        gameObject.GetComponent<PlayerMovement>().UnFreeze();
     }
 }

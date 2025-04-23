@@ -42,9 +42,11 @@ public class TrickSystem : NetworkBehaviour
     {
         Canvas.SetActive(false);
         playerScore = new PlayerScore();
-        Offline = !NetworkManager.Singleton.IsServer;
-
+        Offline = !NetworkManager.Singleton.IsServer || !NetworkManager.Singleton.IsClient;
         SceneManager.sceneLoaded += OnSceneLoaded;
+        if(Offline) {init(); inStuntMode = true;}
+
+
     }
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
@@ -52,20 +54,18 @@ public class TrickSystem : NetworkBehaviour
         Offline = !NetworkManager.Singleton.IsServer || !NetworkManager.Singleton.IsClient;
         if (scene.name == "StuntMode")
         {
-            enabled = true;
+            inStuntMode = true;
             init();
         }
+        else { inStuntMode = false; return; }
+
     }
     void init()
     {
-        if (SceneManager.GetActiveScene().name == "StuntMode")
-        {
-            inStuntMode = true;
-            if (Offline) Canvas.SetActive(true);
-            else if (IsOwner) Canvas.SetActive(true);
-            else Canvas.SetActive(false);
-        }
-        else { inStuntMode = false; return; }
+        playerScore = new PlayerScore();
+        if (Offline) Canvas.SetActive(true);
+        else if (IsOwner) Canvas.SetActive(true);
+        else Canvas.SetActive(false);
         Debug.Log("Trick System Initialized");
         Drone = gameObject;
         rb = GetComponent<Rigidbody>();
@@ -90,7 +90,8 @@ public class TrickSystem : NetworkBehaviour
     float addScoreTimer = 0.5f;
     void Update()
     {
-        Offline = !NetworkManager.Singleton.IsServer;
+        Offline = !NetworkManager.Singleton.IsServer || NetworkManager.Singleton.IsClient;
+        Debug.Log("Offline: " + Offline + " IsOwner: " + IsOwner + " InStuntMode: " + inStuntMode);
         if ((Offline || IsOwner) && inStuntMode)
         {
             Run();
@@ -98,6 +99,7 @@ public class TrickSystem : NetworkBehaviour
     }
     void Run()
     {
+        Debug.Log("Running Trick System");
         // Detect if the drone is performing any of these actions and set the booleans accordingly
         if (testFlip) Flip = DetectFlip();
         if (testBarrelRoll) BarrelRoll = DetectBarrelRoll();
@@ -153,6 +155,7 @@ public class TrickSystem : NetworkBehaviour
     }
     void UpdatePlayerUI()
     {
+        Debug.Log("Player Score: " + playerScore.GetScore() + " Score To Add: " + playerScore.GetScoreToAdd() + " Multiplyer: " + Multiplyer);
         playerScoreText.text = "" + playerScore.GetScore();
         addedScoreText.text = "" + playerScore.GetScoreToAdd();
         mutiplyerText.text = "X" + Multiplyer;
