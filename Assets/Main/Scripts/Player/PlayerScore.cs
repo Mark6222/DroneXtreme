@@ -17,6 +17,11 @@ public class PlayerScore
         score += scoreToAdd;
     }
 
+    public void AddPointsForTracking(int addScore)
+    {
+        score += addScore;
+    }
+
     public int GetScore()
     {
         return score;

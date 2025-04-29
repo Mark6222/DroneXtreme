@@ -47,7 +47,7 @@ public class StuntManager : MonoBehaviour
         yield return new WaitForSeconds(1);
         if (this == null) yield break;
         Countdown.text = "";
-        StartStunt();
+        if(SceneManager.GetActiveScene().name == "Stunt") StartStunt();
     }
 
     void StartStunt()

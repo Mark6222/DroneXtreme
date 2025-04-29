@@ -42,7 +42,7 @@ public class TrickSystem : NetworkBehaviour
     {
         Canvas.SetActive(false);
         playerScore = new PlayerScore();
-        Offline = !NetworkManager.Singleton.IsServer || !NetworkManager.Singleton.IsClient;
+        if(NetworkManager != null) Offline = !NetworkManager.Singleton.IsServer || !NetworkManager.Singleton.IsClient;
         SceneManager.sceneLoaded += OnSceneLoaded;
         if(Offline) {init(); inStuntMode = true;}
 
@@ -51,7 +51,7 @@ public class TrickSystem : NetworkBehaviour
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         Debug.Log("Scene Loaded: " + scene.name);
-        Offline = !NetworkManager.Singleton.IsServer || !NetworkManager.Singleton.IsClient;
+        if(NetworkManager != null) Offline = !NetworkManager.Singleton.IsServer || !NetworkManager.Singleton.IsClient;
         if (scene.name == "StuntMode")
         {
             inStuntMode = true;

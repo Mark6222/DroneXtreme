@@ -23,6 +23,7 @@ public class PlayerManeger : NetworkBehaviour
     public GameObject RestartButton;
     public GameObject MainMenuButton;
     public GameObject LeaveButton;
+    public GameObject Target;
 
     [SerializeField] bool isMultiplayer = false;
     bool stuntMode = false;
@@ -42,15 +43,18 @@ public class PlayerManeger : NetworkBehaviour
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         Debug.Log($"Scene loaded: {scene.name}, Mode: {mode}");
-        isMultiplayer = NetworkManager.Singleton.IsServer || NetworkManager.Singleton.IsClient;
+        if (NetworkManager != null) isMultiplayer = NetworkManager.Singleton.IsServer || NetworkManager.Singleton.IsClient;
         if (isMultiplayer && !IsHost)
         {
             ResetEndScreenAndPlayer();
         }
-        if ((NetworkManager.Singleton.IsServer || NetworkManager.Singleton.IsClient) && !OnlineDrone)
+        if (NetworkManager != null)
         {
-            gameObject.SetActive(false);
-            return;
+            if ((NetworkManager.Singleton.IsServer || NetworkManager.Singleton.IsClient) && !OnlineDrone)
+            {
+                gameObject.SetActive(false);
+                return;
+            }
         }
         HandleSceneSpecificSetup();
     }
@@ -58,7 +62,7 @@ public class PlayerManeger : NetworkBehaviour
     void Start()
     {
         SplashScreen.SetActive(false);
-        isMultiplayer = NetworkManager.Singleton.IsServer || NetworkManager.Singleton.IsClient;
+        if (NetworkManager != null) isMultiplayer = NetworkManager.Singleton.IsServer || NetworkManager.Singleton.IsClient;
         if (IsServer && !OnlineDrone)
         {
             gameObject.SetActive(false);
@@ -92,6 +96,11 @@ public class PlayerManeger : NetworkBehaviour
             ActivatePlayer(true);
             RaceMode();
         }
+        else if (sceneName == "TargetTracking")
+        {
+            ActivatePlayer(true);
+            TargetTrackingMode();
+        }
         else if (sceneName == "StuntMode")
         {
             ActivatePlayer(true);
@@ -102,7 +111,8 @@ public class PlayerManeger : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
-        if((isMultiplayer && IsOwner) || !isMultiplayer){
+        if ((isMultiplayer && IsOwner) || !isMultiplayer)
+        {
             if (Input.GetKeyDown(KeyCode.Escape) && SceneManager.GetActiveScene().name != "SplashScreen")
             {
                 if (SplashScreen.activeSelf)
@@ -116,6 +126,24 @@ public class PlayerManeger : NetworkBehaviour
                     gameObject.GetComponent<PlayerMovement>().Freeze();
                     SettingScreenAnimator.SetTrigger("Hide");
                 }
+            }
+        }
+    }
+
+    public void DisplayOptions()
+    {
+        if ((isMultiplayer && IsOwner) || !isMultiplayer)
+        {
+            if (SplashScreen.activeSelf)
+            {
+                SplashScreen.SetActive(false);
+                gameObject.GetComponent<PlayerMovement>().UnFreeze();
+            }
+            else
+            {
+                SplashScreen.SetActive(true);
+                gameObject.GetComponent<PlayerMovement>().Freeze();
+                SettingScreenAnimator.SetTrigger("Hide");
             }
         }
     }
@@ -211,6 +239,9 @@ public class PlayerManeger : NetworkBehaviour
         if (gameObject.GetComponent<StuntManager>() != null)
             gameObject.GetComponent<StuntManager>().enabled = false;
 
+        if (gameObject.GetComponent<TargetTracking>() != null)
+            gameObject.GetComponent<TargetTracking>().enabled = false;
+
         if (ScoringUI != null)
             ScoringUI.SetActive(false);
 
@@ -220,7 +251,51 @@ public class PlayerManeger : NetworkBehaviour
         StartCoroutine(WaitAndSpawnPlayer());
         EndScreenHost();
     }
+    void TargetTrackingMode()
+    {
+        stuntMode = false;
+        GameObject trollyCam = GameObject.FindGameObjectWithTag("TrollyCam");
+        if (trollyCam != null)
+        {
+            trollyCam.SetActive(false);
+        }
+        ActivatePlayer(true);
+        if (gameObject.GetComponent<TrickSystem>() != null)
+            gameObject.GetComponent<TrickSystem>().enabled = false;
 
+        if (gameObject.GetComponent<RaceManager>() != null)
+            gameObject.GetComponent<RaceManager>().enabled = false;
+
+        if (gameObject.GetComponent<StuntManager>() != null)
+            gameObject.GetComponent<StuntManager>().enabled = false;
+
+        if (gameObject.GetComponent<TargetTracking>() != null)
+            gameObject.GetComponent<TargetTracking>().enabled = true;
+
+        if (ScoringUI != null)
+            ScoringUI.SetActive(false);
+
+        if (RacingUI != null)
+            RacingUI.SetActive(true);
+
+        StartCoroutine(SpawnPlayerInTargetTracking());
+        EndScreenHost();
+    }
+    private IEnumerator SpawnPlayerInTargetTracking()
+    {
+        var pointsManager = GameObject.Find("ProceduralGeneration").GetComponent<PointsManager>();
+
+        yield return new WaitUntil(() => pointsManager.spawnPlayer);
+
+        GameObject SpawnPoint = GameObject.Find("SpawnPoint");
+        if (SpawnPoint != null)
+        {
+            transform.position = SpawnPoint.transform.position;
+            transform.rotation = SpawnPoint.transform.rotation;
+        }
+        gameObject.GetComponent<TargetTracking>().ShowUI();
+        Target = GameObject.FindGameObjectWithTag("Target");
+    }
     void StuntMode()
     {
         stuntMode = true;
@@ -234,6 +309,9 @@ public class PlayerManeger : NetworkBehaviour
 
         if (gameObject.GetComponent<TrickSystem>() != null)
             gameObject.GetComponent<TrickSystem>().enabled = true;
+
+        if (gameObject.GetComponent<TargetTracking>() != null)
+            gameObject.GetComponent<TargetTracking>().enabled = false;
 
         if (ScoringUI != null)
             ScoringUI.SetActive(true);

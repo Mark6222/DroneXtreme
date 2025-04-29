@@ -1,5 +1,6 @@
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.Splines;
 
 public class ProcedurelGeneration : MonoBehaviour
@@ -20,6 +21,7 @@ public class ProcedurelGeneration : MonoBehaviour
     float prevRandomX, prevRandomY, prevRandomZ;
     GameObject[] points;
     public Vector3[] pointTransforms;
+    public bool targetTracking = false;
 
     void Start()
     {
@@ -60,9 +62,10 @@ public class ProcedurelGeneration : MonoBehaviour
                 Vector3 right = new Vector3(-forward.z, 0, forward.x);
 
                 float moveX = UnityEngine.Random.Range(-prevRandomX + 20, prevRandomX + 20);
-                float moveY = UnityEngine.Random.Range(-prevRandomY + 10, prevRandomY + 10);
+                float moveY = 0f;
+                if (!targetTracking) moveY = UnityEngine.Random.Range(-prevRandomY + 10, prevRandomY + 10);
                 prevRandomX = moveX;
-                prevRandomY = moveY;
+                if (!targetTracking) prevRandomY = moveY;
                 Vector3 offset = (right * moveX) + (Vector3.up * moveY);
 
                 pointTransforms[i] = basePosition + offset;
@@ -77,10 +80,13 @@ public class ProcedurelGeneration : MonoBehaviour
             splineContainerTerrain.Spline.Closed = true;
             splineContainerTrolly.Spline.Closed = true;
         }
-        Spline.GetComponent<SplineInstantiate>().enabled = true;
+        if (SceneManager.GetActiveScene().name != "TargetTracking")
+        {
+            Spline.GetComponent<SplineInstantiate>().enabled = true;
+            gameObject.GetComponent<PointsManager>().managePoints = true;
+            gameObject.GetComponent<TerrainGenerater>().Generate();
+        }
         Spline2.GetComponent<SplineInstantiate>().enabled = true;
-        gameObject.GetComponent<PointsManager>().managePoints = true;
-        gameObject.GetComponent<TerrainGenerater>().Generate();
     }
     int num = 0;
     bool Once = true;

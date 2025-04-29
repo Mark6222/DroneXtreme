@@ -34,6 +34,11 @@ public class PlayerMovement : NetworkBehaviour
         // Physics.gravity = new Vector3(0, -100f, 0);
         audioSource = GetComponent<AudioSource>();
         rig.isKinematic = false;
+        // rig.centerOfMass = Vector3.zero;
+        // rig.collisionDetectionMode = CollisionDetectionMode.Continuous;
+        rig.interpolation = RigidbodyInterpolation.Interpolate;
+
+
     }
     public void Freeze()
     {
