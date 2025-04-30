@@ -84,9 +84,10 @@ public class ProcedurelGeneration : MonoBehaviour
         {
             Spline.GetComponent<SplineInstantiate>().enabled = true;
             gameObject.GetComponent<PointsManager>().managePoints = true;
-            gameObject.GetComponent<TerrainGenerater>().Generate();
         }
         Spline2.GetComponent<SplineInstantiate>().enabled = true;
+        gameObject.GetComponent<TerrainGenerater>().Generate();
+
     }
     int num = 0;
     bool Once = true;

@@ -100,7 +100,7 @@ public class TrickSystem : NetworkBehaviour
     void Run()
     {
         Debug.Log("Running Trick System");
-        // Detect if the drone is performing any of these actions and set the booleans accordingly
+
         if (testFlip) Flip = DetectFlip();
         if (testBarrelRoll) BarrelRoll = DetectBarrelRoll();
         if (testDrifTurn) DrifTurn = DetectDrifTurn();
@@ -114,7 +114,7 @@ public class TrickSystem : NetworkBehaviour
         if (testDriftTurnDive) DriftTurnDive = DetectDriftTurnDive();
 
         MultiplyerScore();
-        // if drone is performing any of these actions then add points to score
+
         if (Flip) Debug.Log("Action: " + "Flip");
         if (BarrelRoll) Debug.Log("Action: " + "BarrelRoll");
         if (DrifTurn) Debug.Log("Action: " + "DrifTurn");

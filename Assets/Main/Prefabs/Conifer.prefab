@@ -80,6 +80,34 @@ PrefabInstance:
       propertyPath: m_StaticEditorFlags
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4742473837712756890, guid: db4ccca8fe8fbfd4db6890d5ffc55fd1, type: 3}
+      propertyPath: m_LODs.Array.data[0].screenRelativeHeight
+      value: 0.8146999
+      objectReference: {fileID: 0}
+    - target: {fileID: 4742473837712756890, guid: db4ccca8fe8fbfd4db6890d5ffc55fd1, type: 3}
+      propertyPath: m_LODs.Array.data[1].screenRelativeHeight
+      value: 0.6499648
+      objectReference: {fileID: 0}
+    - target: {fileID: 4742473837712756890, guid: db4ccca8fe8fbfd4db6890d5ffc55fd1, type: 3}
+      propertyPath: m_LODs.Array.data[2].screenRelativeHeight
+      value: 0.46602446
+      objectReference: {fileID: 0}
+    - target: {fileID: 4742473837712756890, guid: db4ccca8fe8fbfd4db6890d5ffc55fd1, type: 3}
+      propertyPath: m_LODs.Array.data[3].screenRelativeHeight
+      value: 0.3047374
+      objectReference: {fileID: 0}
+    - target: {fileID: 4742473837712756890, guid: db4ccca8fe8fbfd4db6890d5ffc55fd1, type: 3}
+      propertyPath: m_LODs.Array.data[4].screenRelativeHeight
+      value: 0.18004104
+      objectReference: {fileID: 0}
+    - target: {fileID: 4742473837712756890, guid: db4ccca8fe8fbfd4db6890d5ffc55fd1, type: 3}
+      propertyPath: m_LODs.Array.data[5].screenRelativeHeight
+      value: 0.090238534
+      objectReference: {fileID: 0}
+    - target: {fileID: 4742473837712756890, guid: db4ccca8fe8fbfd4db6890d5ffc55fd1, type: 3}
+      propertyPath: m_LODs.Array.data[6].screenRelativeHeight
+      value: 0.023507247
+      objectReference: {fileID: 0}
     - target: {fileID: 5312901204011255402, guid: db4ccca8fe8fbfd4db6890d5ffc55fd1, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 0

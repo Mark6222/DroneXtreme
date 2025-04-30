@@ -22,7 +22,7 @@ public class PlayerAudio : MonoBehaviour
             audioSource.clip = droneFlying;
             audioSource.loop = true;
             audioSource.volume = 0.5f; 
-            audioSource.pitch = basePitch; // Start at max speed
+            audioSource.pitch = basePitch;
             audioSource.Play();
         }
     }
@@ -41,7 +41,6 @@ public class PlayerAudio : MonoBehaviour
                 audioSource.Play();
             }
 
-            // Reduce pitch & volume based on inputY
             audioSource.volume = Mathf.Lerp(0.3f, 1f, inputY);
             float pitchDiff = peakPitch - basePitch;
             pitchDiff = pitchDiff * inputY;
